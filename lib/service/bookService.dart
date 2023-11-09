@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import '../constant/book.dart';
+import '../data/book.dart';
 import '../main.dart';
 
 class BookService extends ChangeNotifier {
@@ -26,12 +26,12 @@ class BookService extends ChangeNotifier {
     savelikedBookList();
   }
 
-  void search(String q) async {
+  void search(String q, int maxResults) async {
     bookList.clear(); // 검색 버튼 누를때 이전 데이터들을 지워주기
 
     if (q.isNotEmpty) {
       Response res = await Dio().get(
-        "https://www.googleapis.com/books/v1/volumes?q=$q&startIndex=0&maxResults=40",
+        "https://www.googleapis.com/books/v1/volumes?q=$q&startIndex=0&maxResults=$maxResults&filter=ebooks",
       );
       List items = res.data["items"];
 
@@ -43,7 +43,7 @@ class BookService extends ChangeNotifier {
           authors: (item['volumeInfo']['authors'] ?? []) as List,
           publishedDate: item['volumeInfo']['publishedDate'] ?? "",
           thumbnail: item['volumeInfo']['imageLinks']?['thumbnail'] ??
-              "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg",
+              "https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo-available_87543-11093.jpg",
           previewLink: item['volumeInfo']['previewLink'] ?? "",
         );
         bookList.add(book);
