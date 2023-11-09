@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/pages/book_report_page.dart';
 
+import '../res/strings.dart';
 import 'liked_book_page.dart';
 import 'search_page.dart';
 
@@ -15,10 +17,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: [
+      body: SafeArea(
+          child: [
         SearchPage(),
+        BookReportPage(),
         LikedBookPage(),
-      ].elementAt(bottomNavIndex),
+      ].elementAt(bottomNavIndex)),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
@@ -35,11 +39,15 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            label: '검색',
+            label: searchBooks,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.edit_note_rounded),
+            label: bookReport,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.star),
-            label: '좋아요',
+            label: liked,
           ),
         ],
         currentIndex: bottomNavIndex,
