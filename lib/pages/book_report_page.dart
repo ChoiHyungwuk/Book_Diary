@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/pages/book_report_edit_page.dart';
 
 import '../res/strings.dart';
 
@@ -18,8 +19,11 @@ class _BookReportPage extends State<BookReportPage> {
       body: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              Text("전체(10)"),
+              Expanded(
+                child: SizedBox(width: double.infinity),
+              ),
               ElevatedButton(
                 style: style,
                 onPressed: () {},
@@ -52,11 +56,18 @@ class _BookReportPage extends State<BookReportPage> {
                 return null;
               },
             ),
-          )
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push<void>(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => BookReportEditPage(index: 1),
+            ),
+          );
+        },
         child: Column(children: [
           Icon(Icons.add_box_outlined),
           Text(addReport),

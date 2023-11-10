@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/pages/book_report_page.dart';
 
 import '../res/strings.dart';
-import 'liked_book_page.dart';
-import 'search_page.dart';
+import 'book_liked_page.dart';
+import 'book_search.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);

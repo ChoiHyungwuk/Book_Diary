@@ -16,11 +16,11 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<DropdownMenuEntry<viewCounts>> SearchEntries =
-        <DropdownMenuEntry<viewCounts>>[];
-    for (final viewCounts string in viewCounts.values) {
+    final List<DropdownMenuEntry<ViewCounts>> SearchEntries =
+        <DropdownMenuEntry<ViewCounts>>[];
+    for (final ViewCounts string in ViewCounts.values) {
       SearchEntries.add(
-        DropdownMenuEntry<viewCounts>(value: string, label: string.label),
+        DropdownMenuEntry<ViewCounts>(value: string, label: string.label),
       );
     }
 
@@ -64,11 +64,11 @@ class SearchPage extends StatelessWidget {
                 SizedBox(
                   width: 5,
                 ),
-                DropdownMenu<viewCounts>(
+                DropdownMenu<ViewCounts>(
                   controller: _searchOptionController,
                   width: 95,
                   dropdownMenuEntries: SearchEntries,
-                  initialSelection: viewCounts.c,
+                  initialSelection: ViewCounts.c,
                   label: Text(searchOptionStr),
                   onSelected: (value) {
                     searchOption = value?.val ?? 30;
