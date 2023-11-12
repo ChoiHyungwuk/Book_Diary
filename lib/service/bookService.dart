@@ -17,6 +17,7 @@ class BookService extends ChangeNotifier {
   List<Book> bookList = []; // 책 목록
   List<Book> likedBookList = []; //좋아요 한 책 목록
   List<BookReport> bookReportList = []; //독후감 리스트
+  List<BookReport> UserbookReportList = []; //독후감 리스트
 
   void toggleLikeBook({required Book book}) {
     String bookId = book.id;
@@ -76,21 +77,21 @@ class BookService extends ChangeNotifier {
   //독후감 페이지 리스트
   saveBookReportList() {
     List BookJsonList =
-        bookReportList.map((BookReport) => BookReport.toJson()).toList();
+        UserbookReportList.map((BookReport) => BookReport.toJson()).toList();
 
     String jsonString = jsonEncode(BookJsonList);
 
-    prefs.setString('bookReportList', jsonString);
+    prefs.setString('UserbookReportList', jsonString);
   }
 
   loadBookReportList() {
-    String? jsonString = prefs.getString('bookReportList');
+    String? jsonString = prefs.getString('UserbookReportList');
 
     if (jsonString == null) return;
 
     List BookJsonList = jsonDecode(jsonString);
 
-    bookReportList =
+    UserbookReportList =
         BookJsonList.map((json) => BookReport.fromJson(json)).toList();
   }
 }

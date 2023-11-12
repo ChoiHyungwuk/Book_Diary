@@ -40,6 +40,7 @@ dependencies:
   webview_flutter: ^3.0.4
   dio: ^5.3.3
   flutter_rating_bar: ^4.0.1
+  calendar_date_picker2: ^0.5.3
 
 dev_dependencies:
   flutter_test:
