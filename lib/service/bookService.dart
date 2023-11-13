@@ -16,7 +16,7 @@ class BookService extends ChangeNotifier {
 
   List<Book> bookList = []; // 책 목록
   List<Book> likedBookList = []; //좋아요 한 책 목록
-  List<BookReport> bookReportList = []; //독후감 리스트
+  List<BookReport> bookReportList = []; //임시 독후감 리스트
   List<BookReport> UserbookReportList = []; //독후감 리스트
 
   void toggleLikeBook({required Book book}) {
@@ -93,5 +93,43 @@ class BookService extends ChangeNotifier {
 
     UserbookReportList =
         BookJsonList.map((json) => BookReport.fromJson(json)).toList();
+  }
+
+  createInitReport({required DateTime editDay}) {
+    BookReport report = BookReport(editDay: editDay);
+    UserbookReportList.add(report);
+    notifyListeners();
+    saveBookReportList();
+  }
+
+  createBookReport({required DateTime editDay}) {
+    BookReport report = BookReport(editDay: editDay);
+    UserbookReportList.add(report);
+    notifyListeners();
+    saveBookReportList();
+  }
+
+  updateBookReport(
+      {required int index,
+      required DateTime editDay,
+      required int id,
+      required String bookTitle,
+      required String thumbnail,
+      required List authors,
+      double? stars,
+      required List<DateTime> startDate,
+      required List<DateTime> endDate,
+      required String title,
+      required String content}) {
+    BookReport memo = UserbookReportList[index];
+    memo.content = content;
+    notifyListeners();
+    saveBookReportList();
+  }
+
+  deleteBookReport({required int index}) {
+    UserbookReportList.removeAt(index);
+    notifyListeners();
+    saveBookReportList();
   }
 }

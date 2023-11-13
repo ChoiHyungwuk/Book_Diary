@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-void showDeleteDialog(BuildContext context) {
-  showDialog(
+Future<bool> show(BuildContext context, String title) async {
+  bool choice = false;
+  await showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text("정말로 삭제하시겠습니까?"),
+        title: Text('${title}'),
         actions: [
           // 취소 버튼
           TextButton(
@@ -17,8 +18,8 @@ void showDeleteDialog(BuildContext context) {
           // 확인 버튼
           TextButton(
             onPressed: () {
-              Navigator.pop(context); // 팝업 닫기
-              Navigator.pop(context); // HomePage 로 가기
+              choice = true;
+              Navigator.pop(context);
             },
             child: Text(
               "확인",
@@ -29,4 +30,5 @@ void showDeleteDialog(BuildContext context) {
       );
     },
   );
+  return choice;
 }

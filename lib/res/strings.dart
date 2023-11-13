@@ -11,6 +11,7 @@ String bookReportAlbumView = "앨범형 보기";
 String addReport = "새 독후감";
 String bookReadStartDate = "독서 시작일";
 String bookReadEndDate = "독서 완료일";
+String bookReportBackPressed = "저장되지 않은 정보는 삭제됩니다.\n정말 뒤로 가시겠습니까?";
 
 enum ViewCounts {
   a('10', 10),

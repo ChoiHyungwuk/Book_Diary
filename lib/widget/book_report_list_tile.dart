@@ -1,57 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_book_search/data/book.dart';
 import 'package:flutter_project_book_search/service/bookService.dart';
 import 'package:provider/provider.dart';
 
-import '../pages/web_view_page.dart';
+import '../data/book_report.dart';
 
-class BookTile extends StatelessWidget {
-  const BookTile({
+class BookReportListTile extends StatelessWidget {
+  const BookReportListTile({
     super.key,
-    required this.book,
-    page,
+    required this.bookReport,
   });
 
-  final Book book;
-  final bool page = false;
+  final BookReport bookReport;
 
   @override
   Widget build(BuildContext context) {
     BookService bookService = context.read<BookService>();
 
     return ListTile(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WebViewPage(
-              url: book.previewLink.replaceFirst("http", "https"),
-            ),
-          ),
-        );
-      },
+      onTap: () {},
       leading: Image.network(
-        book.thumbnail,
+        bookReport.thumbnail ??
+            "https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo-available_87543-11093.jpg",
         fit: BoxFit.fitHeight,
       ),
       title: Text(
-        book.title,
+        bookReport.title ?? "빈 제목",
         style: TextStyle(fontSize: 16),
       ),
       subtitle: Text(
-        "저자 : ${book.authors.join(", ")}\n출간일 : ${book.publishedDate}",
+        "저자 : ",
         style: TextStyle(color: Colors.grey),
-      ),
-      trailing: IconButton(
-        onPressed: () {
-          bookService.toggleLikeBook(book: book);
-        },
-        icon: bookService.likedBookList.map((book) => book.id).contains(book.id)
-            ? Icon(
-                Icons.star,
-                color: Colors.amber,
-              )
-            : Icon(Icons.star_border),
       ),
     );
   }

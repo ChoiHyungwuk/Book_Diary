@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/data/book_report.dart';
 import 'package:flutter_project_book_search/pages/book_report_edit_page.dart';
 import 'package:flutter_project_book_search/service/bookService.dart';
 import 'package:provider/provider.dart';
 
 import '../res/strings.dart';
+import '../widget/book_report_list_tile.dart';
 
 class BookReportPage extends StatefulWidget {
   BookReportPage({super.key});
@@ -24,7 +26,7 @@ class _BookReportPage extends State<BookReportPage> {
             children: [
               Row(
                 children: [
-                  Text("전체(10)"),
+                  Text("전체(${bookService.UserbookReportList.length})"),
                   Expanded(
                     child: SizedBox(width: double.infinity),
                   ),
@@ -51,25 +53,34 @@ class _BookReportPage extends State<BookReportPage> {
               ),
               Divider(),
               Expanded(
-                child: ListView.separated(
-                  itemCount: 1,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider();
-                  },
-                  itemBuilder: (BuildContext context, int index) {
-                    return null;
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: ListView.separated(
+                    itemCount: bookService.UserbookReportList.length,
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                    itemBuilder: (context, index) {
+                      if (bookService.UserbookReportList.isEmpty)
+                        return SizedBox();
+                      BookReport bookReport =
+                          bookService.UserbookReportList.elementAt(index);
+                      return BookReportListTile(bookReport: bookReport);
+                    },
+                  ),
                 ),
               ),
             ],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
+              bookService.createInitReport(editDay: DateTime.now());
               Navigator.push<void>(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      BookReportEditPage(index: 1),
+                  builder: (BuildContext context) => BookReportEditPage(
+                    index: bookService.UserbookReportList.length - 1,
+                  ),
                 ),
               );
             },
