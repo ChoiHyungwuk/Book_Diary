@@ -35,7 +35,7 @@ class BookService extends ChangeNotifier {
 
     if (q.isNotEmpty) {
       Response res = await Dio().get(
-        "https://www.googleapis.com/books/v1/volumes?q=$q&startIndex=0&maxResults=$maxResults&filter=ebooks",
+        "https://www.googleapis.com/books/v1/volumes?q=$q&startIndex=0&maxResults=$maxResults",
       );
       List items = res.data["items"];
 
@@ -98,7 +98,6 @@ class BookService extends ChangeNotifier {
   createInitReport({required DateTime editDay}) {
     BookReport report = BookReport(editDay: editDay);
     bookReportList.add(report);
-    notifyListeners();
     saveBookReportList();
   }
 
@@ -112,12 +111,33 @@ class BookService extends ChangeNotifier {
   updateBookReport({required int index, DateTime? editDay}) {
     BookReport report = bookReportList[index];
     report.editDay = editDay ?? DateTime.now();
+    report.startDate = report.startDate ?? DateTime.now().toIso8601String();
+    report.endDate = report.endDate ?? DateTime.now().toIso8601String();
     notifyListeners();
     saveBookReportList();
   }
 
   deleteBookReport({required int index}) {
     bookReportList.removeAt(index);
+    notifyListeners();
+    saveBookReportList();
+  }
+
+  checkNullElement() {
+    for (int index = 0; index < bookReportList.length; index++) {
+      if (bookReportList[index].id == null ||
+          bookReportList[index].bookTitle == null ||
+          bookReportList[index].thumbnail == null ||
+          bookReportList[index].authors == null ||
+          bookReportList[index].stars == null ||
+          bookReportList[index].startDate == null ||
+          bookReportList[index].endDate == null ||
+          bookReportList[index].title == null ||
+          bookReportList[index].content == null) {
+        bookReportList.removeAt(index);
+        index = 0;
+      }
+    }
     notifyListeners();
     saveBookReportList();
   }

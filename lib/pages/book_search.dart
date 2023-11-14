@@ -44,6 +44,7 @@ class SearchPage extends StatelessWidget {
                       height: 57,
                       alignment: AlignmentDirectional.center,
                       child: TextField(
+                        textInputAction: TextInputAction.done,
                         onSubmitted: (value) {
                           bookService.search(value, searchOption, bookLists);
                         },

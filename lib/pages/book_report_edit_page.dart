@@ -59,8 +59,6 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
     BookService bookService = context.read<BookService>();
     BookReport bookReport = bookService.bookReportList[widget.index];
 
-    // contentController.text = memo.content;
-
     return WillPopScope(
       onWillPop: () {
         return Future(
