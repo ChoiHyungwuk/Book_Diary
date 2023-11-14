@@ -1,12 +1,12 @@
 class BookReport {
   DateTime editDay; //독후감 작성일 <- 필터 기능 생성 시 이용
-  int? id; //책 id
+  String? id; //책 id
   String? bookTitle; //책 제목
   String? thumbnail; // 썸네일 이미지 링크
   List? authors; //글쓴이
   double? stars; //별점
-  DateTime? startDate; //독서 시작일
-  DateTime? endDate; //독서 종료일
+  String? startDate; //독서 시작일
+  String? endDate; //독서 종료일
   String? title; //독후감 제목
   String? content; //독후감 내용
 

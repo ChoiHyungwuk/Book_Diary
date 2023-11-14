@@ -21,7 +21,7 @@ class LikedBookPage extends StatelessWidget {
             itemBuilder: (context, index) {
               if (bookService.likedBookList.isEmpty) return SizedBox();
               Book book = bookService.likedBookList.elementAt(index);
-              return BookTile(book: book, page: true);
+              return BookTile(book: book, pageOption: false);
             },
           ),
         ),

@@ -160,6 +160,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  motion_toast:
+    dependency: "direct main"
+    description:
+      name: motion_toast
+      sha256: "5742e33ec2f11210f5269294304fb9bd0f30eace78ad23925eb9306dce7763c9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.7.9"
   nested:
     dependency: transitive
     description:

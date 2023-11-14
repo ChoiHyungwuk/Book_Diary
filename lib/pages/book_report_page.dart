@@ -1,21 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
+import 'package:flutter_project_book_search/main.dart';
 import 'package:flutter_project_book_search/pages/book_report_edit_page.dart';
 import 'package:flutter_project_book_search/service/bookService.dart';
+import 'package:flutter_project_book_search/widget/book_report_album_tile.dart';
+import 'package:flutter_project_book_search/widget/book_report_list_tile.dart';
 import 'package:provider/provider.dart';
 
 import '../res/strings.dart';
-import '../widget/book_report_list_tile.dart';
 
 class BookReportPage extends StatefulWidget {
   BookReportPage({super.key});
+
   @override
   State<StatefulWidget> createState() => _BookReportPage();
 }
 
 class _BookReportPage extends State<BookReportPage> {
-  final ButtonStyle style =
-      ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 10));
+  final List<bool> _selectedViewOption = <bool>[
+    (prefs.getBool('viewOption') ?? true),
+    !(prefs.getBool('viewOption') ?? true)
+  ];
+  bool viewOption = prefs.getBool('viewOption') ?? true;
+
+  List<Widget> viewContent = <Widget>[
+    Row(
+      children: [
+        Icon(Icons.list),
+        Text(
+          bookReportListView,
+          style: TextStyle(fontSize: 10),
+        ),
+      ],
+    ),
+    Row(
+      children: [
+        Icon(Icons.grid_view_rounded),
+        Text(bookReportAlbumView, style: TextStyle(fontSize: 10)),
+      ],
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -24,52 +48,75 @@ class _BookReportPage extends State<BookReportPage> {
         return Scaffold(
           body: Column(
             children: [
-              Row(
-                children: [
-                  Text("전체(${bookService.UserbookReportList.length})"),
-                  Expanded(
-                    child: SizedBox(width: double.infinity),
-                  ),
-                  ElevatedButton(
-                    style: style,
-                    onPressed: () {},
-                    child: Row(children: [
-                      Icon(Icons.list),
-                      Text(bookReportListView),
-                    ]),
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  ElevatedButton(
-                    style: style,
-                    onPressed: () {},
-                    child: Row(children: [
-                      Icon(Icons.grid_view_rounded),
-                      Text(bookReportAlbumView),
-                    ]),
-                  ),
-                ],
-              ),
-              Divider(),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: ListView.separated(
-                    itemCount: bookService.UserbookReportList.length,
-                    separatorBuilder: (context, index) {
-                      return Divider();
-                    },
-                    itemBuilder: (context, index) {
-                      if (bookService.UserbookReportList.isEmpty)
-                        return SizedBox();
-                      BookReport bookReport =
-                          bookService.UserbookReportList.elementAt(index);
-                      return BookReportListTile(bookReport: bookReport);
-                    },
-                  ),
+              Container(
+                height: 65,
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  children: [
+                    Text("전체(${bookService.bookReportList.length})",
+                        style: TextStyle(fontSize: 15)),
+                    Expanded(
+                      child: SizedBox(width: double.infinity),
+                    ),
+                    ToggleButtons(
+                      onPressed: (int index) {
+                        setState(() {
+                          for (int i = 0; i < _selectedViewOption.length; i++) {
+                            _selectedViewOption[i] = i == index;
+                          }
+                          prefs.setBool(
+                              'viewOption', index == 0 ? true : false);
+                          viewOption = index == 0 ? true : false;
+                        });
+                      },
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      selectedBorderColor: Colors.blue[900],
+                      selectedColor: Colors.white,
+                      fillColor: Colors.blueAccent,
+                      color: Colors.black,
+                      constraints: const BoxConstraints(
+                        minHeight: 35.0,
+                        minWidth: 90.0,
+                      ),
+                      isSelected: _selectedViewOption,
+                      children: viewContent,
+                    )
+                  ],
                 ),
               ),
+              Divider(),
+              viewOption
+                  ? Expanded(
+                      child: ListView.separated(
+                        itemCount: bookService.bookReportList.length,
+                        separatorBuilder: (context, index) {
+                          return Divider();
+                        },
+                        itemBuilder: (context, index) {
+                          if (bookService.bookReportList.isEmpty) {
+                            return SizedBox();
+                          }
+                          BookReport bookReport =
+                              bookService.bookReportList.elementAt(index);
+                          return BookReportListTile(bookReport: bookReport);
+                        },
+                      ),
+                    )
+                  : Expanded(
+                      child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3, childAspectRatio: 3 / 4),
+                      itemCount: bookService.bookReportList.length,
+                      itemBuilder: (context, index) {
+                        if (bookService.bookReportList.isEmpty) {
+                          return SizedBox();
+                        }
+                        BookReport bookReport =
+                            bookService.bookReportList.elementAt(index);
+                        return BookReportAlbumTile(bookReport: bookReport);
+                      },
+                    ))
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -79,7 +126,7 @@ class _BookReportPage extends State<BookReportPage> {
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) => BookReportEditPage(
-                    index: bookService.UserbookReportList.length - 1,
+                    index: bookService.bookReportList.length - 1,
                   ),
                 ),
               );

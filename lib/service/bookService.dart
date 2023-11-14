@@ -16,8 +16,8 @@ class BookService extends ChangeNotifier {
 
   List<Book> bookList = []; // 책 목록
   List<Book> likedBookList = []; //좋아요 한 책 목록
-  List<BookReport> bookReportList = []; //임시 독후감 리스트
-  List<BookReport> UserbookReportList = []; //독후감 리스트
+  List<Book> bookSelectList = []; //책 선택 리스트
+  List<BookReport> bookReportList = []; //독후감 리스트
 
   void toggleLikeBook({required Book book}) {
     String bookId = book.id;
@@ -30,8 +30,8 @@ class BookService extends ChangeNotifier {
     savelikedBookList();
   }
 
-  void search(String q, int maxResults) async {
-    bookList.clear(); // 검색 버튼 누를때 이전 데이터들을 지워주기
+  void search(String q, int maxResults, List<Book> list) async {
+    list.clear(); // 검색 버튼 누를때 이전 데이터들을 지워주기
 
     if (q.isNotEmpty) {
       Response res = await Dio().get(
@@ -49,7 +49,7 @@ class BookService extends ChangeNotifier {
               "https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo-available_87543-11093.jpg",
           previewLink: item['volumeInfo']['previewLink'] ?? "",
         );
-        bookList.add(book);
+        list.add(book);
       }
     }
     notifyListeners();
@@ -77,58 +77,47 @@ class BookService extends ChangeNotifier {
   //독후감 페이지 리스트
   saveBookReportList() {
     List BookJsonList =
-        UserbookReportList.map((BookReport) => BookReport.toJson()).toList();
+        bookReportList.map((BookReport) => BookReport.toJson()).toList();
 
     String jsonString = jsonEncode(BookJsonList);
 
-    prefs.setString('UserbookReportList', jsonString);
+    prefs.setString('bookReportList', jsonString);
   }
 
   loadBookReportList() {
-    String? jsonString = prefs.getString('UserbookReportList');
+    String? jsonString = prefs.getString('bookReportList');
 
     if (jsonString == null) return;
 
     List BookJsonList = jsonDecode(jsonString);
 
-    UserbookReportList =
+    bookReportList =
         BookJsonList.map((json) => BookReport.fromJson(json)).toList();
   }
 
   createInitReport({required DateTime editDay}) {
     BookReport report = BookReport(editDay: editDay);
-    UserbookReportList.add(report);
+    bookReportList.add(report);
     notifyListeners();
     saveBookReportList();
   }
 
   createBookReport({required DateTime editDay}) {
     BookReport report = BookReport(editDay: editDay);
-    UserbookReportList.add(report);
+    bookReportList.add(report);
     notifyListeners();
     saveBookReportList();
   }
 
-  updateBookReport(
-      {required int index,
-      required DateTime editDay,
-      required int id,
-      required String bookTitle,
-      required String thumbnail,
-      required List authors,
-      double? stars,
-      required List<DateTime> startDate,
-      required List<DateTime> endDate,
-      required String title,
-      required String content}) {
-    BookReport memo = UserbookReportList[index];
-    memo.content = content;
+  updateBookReport({required int index, DateTime? editDay}) {
+    BookReport report = bookReportList[index];
+    report.editDay = editDay ?? DateTime.now();
     notifyListeners();
     saveBookReportList();
   }
 
   deleteBookReport({required int index}) {
-    UserbookReportList.removeAt(index);
+    bookReportList.removeAt(index);
     notifyListeners();
     saveBookReportList();
   }

@@ -1,1 +1,1 @@
-
+double toolbarHeight = 70;

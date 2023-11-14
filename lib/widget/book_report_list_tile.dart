@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_book_search/service/bookService.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../data/book_report.dart';
 
@@ -14,8 +13,6 @@ class BookReportListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BookService bookService = context.read<BookService>();
-
     return ListTile(
       onTap: () {},
       leading: Image.network(
@@ -24,12 +21,34 @@ class BookReportListTile extends StatelessWidget {
         fit: BoxFit.fitHeight,
       ),
       title: Text(
-        bookReport.title ?? "빈 제목",
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        bookReport.bookTitle ?? "제목이 없습니다",
         style: TextStyle(fontSize: 16),
       ),
       subtitle: Text(
-        "저자 : ",
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        bookReport.title ?? "내용이 없습니다",
         style: TextStyle(color: Colors.grey),
+      ),
+      trailing: AbsorbPointer(
+        absorbing: true, //클릭 가능 여부
+        child: RatingBar.builder(
+          initialRating: bookReport.stars ?? 0,
+          allowHalfRating: true,
+          unratedColor: Colors.amber.withAlpha(50),
+          itemCount: 5,
+          itemSize: 20.0,
+          itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
+          itemBuilder: (context, _) => Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          onRatingUpdate: (rating) {
+            return;
+          },
+        ),
       ),
     );
   }

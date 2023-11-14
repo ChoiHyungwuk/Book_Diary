@@ -9,26 +9,29 @@ class BookTile extends StatelessWidget {
   const BookTile({
     super.key,
     required this.book,
-    page,
+    required this.pageOption,
   });
 
   final Book book;
-  final bool page = false;
+  final bool pageOption; //false = 검색 기능만, true = 선택 기능포함
 
   @override
   Widget build(BuildContext context) {
     BookService bookService = context.read<BookService>();
 
     return ListTile(
+      splashColor: Colors.blue,
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WebViewPage(
-              url: book.previewLink.replaceFirst("http", "https"),
-            ),
-          ),
-        );
+        pageOption
+            ? null
+            : Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WebViewPage(
+                    url: book.previewLink.replaceFirst("http", "https"),
+                  ),
+                ),
+              );
       },
       leading: Image.network(
         book.thumbnail,
@@ -42,17 +45,26 @@ class BookTile extends StatelessWidget {
         "저자 : ${book.authors.join(", ")}\n출간일 : ${book.publishedDate}",
         style: TextStyle(color: Colors.grey),
       ),
-      trailing: IconButton(
-        onPressed: () {
-          bookService.toggleLikeBook(book: book);
-        },
-        icon: bookService.likedBookList.map((book) => book.id).contains(book.id)
-            ? Icon(
-                Icons.star,
-                color: Colors.amber,
-              )
-            : Icon(Icons.star_border),
-      ),
+      trailing: pageOption
+          ? ElevatedButton(
+              onPressed: () {
+                bookService.bookSelectList.add(book);
+                Navigator.pop(context);
+              },
+              child: Text("선택"))
+          : IconButton(
+              onPressed: () {
+                bookService.toggleLikeBook(book: book);
+              },
+              icon: bookService.likedBookList
+                      .map((book) => book.id)
+                      .contains(book.id)
+                  ? Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    )
+                  : Icon(Icons.star_border),
+            ),
     );
   }
 }

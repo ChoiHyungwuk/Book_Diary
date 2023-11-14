@@ -41,6 +41,7 @@ dependencies:
   dio: ^5.3.3
   flutter_rating_bar: ^4.0.1
   calendar_date_picker2: ^0.5.3
+  motion_toast: ^2.7.9
 
 dev_dependencies:
   flutter_test:

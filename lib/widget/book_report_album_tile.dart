@@ -1,57 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_book_search/data/book.dart';
-import 'package:flutter_project_book_search/service/bookService.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-import '../pages/web_view_page.dart';
+import '../data/book_report.dart';
 
-class BookTile extends StatelessWidget {
-  const BookTile({
+class BookReportAlbumTile extends StatelessWidget {
+  const BookReportAlbumTile({
     super.key,
-    required this.book,
-    page,
+    required this.bookReport,
   });
 
-  final Book book;
-  final bool page = false;
+  final BookReport bookReport;
 
   @override
   Widget build(BuildContext context) {
-    BookService bookService = context.read<BookService>();
-
-    return ListTile(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WebViewPage(
-              url: book.previewLink.replaceFirst("http", "https"),
-            ),
-          ),
-        );
-      },
-      leading: Image.network(
-        book.thumbnail,
-        fit: BoxFit.fitHeight,
-      ),
-      title: Text(
-        book.title,
-        style: TextStyle(fontSize: 16),
-      ),
-      subtitle: Text(
-        "저자 : ${book.authors.join(", ")}\n출간일 : ${book.publishedDate}",
-        style: TextStyle(color: Colors.grey),
-      ),
-      trailing: IconButton(
-        onPressed: () {
-          bookService.toggleLikeBook(book: book);
+    return Container(
+      child: GestureDetector(
+        onTap: () {
+          //TO-DO 터치 기능 추가
         },
-        icon: bookService.likedBookList.map((book) => book.id).contains(book.id)
-            ? Icon(
-                Icons.star,
-                color: Colors.amber,
-              )
-            : Icon(Icons.star_border),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              Image.network(
+                bookReport.thumbnail ??
+                    "https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo-available_87543-11093.jpg",
+                fit: BoxFit.fitHeight,
+                height: 130,
+              ),
+              Text(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                bookReport.bookTitle ?? "제목이 없습니다",
+                style: TextStyle(fontSize: 13),
+              ),
+              AbsorbPointer(
+                absorbing: true, //클릭 가능 여부
+                child: RatingBar.builder(
+                  initialRating: bookReport.stars ?? 0,
+                  allowHalfRating: true,
+                  unratedColor: Colors.amber.withAlpha(50),
+                  itemCount: 5,
+                  itemSize: 20.0,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (rating) {
+                    return;
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

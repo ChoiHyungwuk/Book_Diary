@@ -16,41 +16,42 @@ class _HomePageState extends State<HomePage> {
   var bottomNavIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: [
-        SearchPage(),
-        BookReportPage(),
-        LikedBookPage(),
-      ].elementAt(bottomNavIndex)),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        iconSize: 28,
-        type: BottomNavigationBarType.fixed,
-        onTap: (value) {
-          setState(() {
-            bottomNavIndex = value;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: searchBooks,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit_note_rounded),
-            label: bookReport,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: liked,
-          ),
-        ],
-        currentIndex: bottomNavIndex,
+    return SafeArea(
+      child: Scaffold(
+        body: [
+          SearchPage(pageOption: false),
+          BookReportPage(),
+          LikedBookPage(),
+        ].elementAt(bottomNavIndex),
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey,
+          showUnselectedLabels: true,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          iconSize: 28,
+          type: BottomNavigationBarType.fixed,
+          onTap: (value) {
+            setState(() {
+              bottomNavIndex = value;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              label: searchBooks,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.edit_note_rounded),
+              label: bookReport,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.star),
+              label: liked,
+            ),
+          ],
+          currentIndex: bottomNavIndex,
+        ),
       ),
     );
   }
