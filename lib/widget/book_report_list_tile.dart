@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/pages/book_report_view_page.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../data/book_report.dart';
@@ -14,7 +15,14 @@ class BookReportListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookReportViewPage(bookReport: bookReport),
+          ),
+        );
+      },
       leading: Image.network(
         bookReport.thumbnail ??
             "https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo-available_87543-11093.jpg",

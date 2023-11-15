@@ -12,6 +12,7 @@ class BookService extends ChangeNotifier {
   BookService() {
     loadlikedBookList();
     loadBookReportList();
+    checkNullElement();
   }
 
   List<Book> bookList = []; // 책 목록
@@ -135,7 +136,7 @@ class BookService extends ChangeNotifier {
           bookReportList[index].title == null ||
           bookReportList[index].content == null) {
         bookReportList.removeAt(index);
-        index = 0;
+        index = 0; //지우고 리스트 처음부터 순회
       }
     }
     notifyListeners();

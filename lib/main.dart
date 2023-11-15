@@ -25,9 +25,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BookService bookService = context.read<BookService>();
-    bookService.checkNullElement();
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(),
