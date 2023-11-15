@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/res/colors.dart';
+import 'package:flutter_project_book_search/res/style.dart';
+import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-import '../data/book_report.dart';
+import '../../data/book_report.dart';
 
 class BookReportAlbumTile extends StatelessWidget {
   const BookReportAlbumTile({
@@ -14,12 +17,13 @@ class BookReportAlbumTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: GestureDetector(
+      child: InkWell(
+        overlayColor: MaterialStateProperty.all<Color>(overlayColor),
         onTap: () {
           //TO-DO 터치 기능 추가
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Column(
             children: [
               Image.network(
@@ -28,20 +32,22 @@ class BookReportAlbumTile extends StatelessWidget {
                 fit: BoxFit.fitHeight,
                 height: 130,
               ),
+              SizedBox(height: 1),
               Text(
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 bookReport.bookTitle ?? "제목이 없습니다",
-                style: TextStyle(fontSize: 13),
+                style: textStyleBlack14,
               ),
+              SizedBox(height: 1),
               AbsorbPointer(
-                absorbing: true, //클릭 가능 여부
+                absorbing: true, //클릭 가능 여부 true = 클릭 막기
                 child: RatingBar.builder(
                   initialRating: bookReport.stars ?? 0,
                   allowHalfRating: true,
                   unratedColor: Colors.amber.withAlpha(50),
                   itemCount: 5,
-                  itemSize: 20.0,
+                  itemSize: iconSize20,
                   itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
                   itemBuilder: (context, _) => Icon(
                     Icons.star,

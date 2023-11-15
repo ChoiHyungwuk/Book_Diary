@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/Utils/Utils.dart';
 import 'package:flutter_project_book_search/pages/book_search.dart';
+import 'package:flutter_project_book_search/res/colors.dart';
+import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/service/bookService.dart';
-import 'package:flutter_project_book_search/widget/dialog.dart';
+import 'package:flutter_project_book_search/widget/dialog/dialog.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:motion_toast/motion_toast.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../data/book_report.dart';
 import '../res/strings.dart';
-import '../widget/calender_picker_dialog.dart';
+import '../widget/dialog/calender_picker_dialog.dart';
 
 class BookReportEditPage extends StatefulWidget {
-  BookReportEditPage({
+  const BookReportEditPage({
     super.key,
     required this.index,
   });
@@ -30,9 +33,9 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
   String? reportTitle; //독후감 제목
   String? reportContent; //독후감 내용
 
-  TextEditingController contentController = TextEditingController();
+  late FToast fToast;
 
-  var test;
+  TextEditingController contentController = TextEditingController();
 
   void setStartDate(date) {
     setState(() {
@@ -52,6 +55,13 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
         startDate = date; //시작일보다 값이 높을 경우 동일 시간값으로 설정
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fToast = FToast(); //토스트 메시지 초기화
+    fToast.init(context);
   }
 
   @override
@@ -78,40 +88,51 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
           child: Scaffold(
             resizeToAvoidBottomInset: false, //화면 밀림방지
             appBar: AppBar(
-              toolbarHeight: toolbarHeight,
+              backgroundColor: appBarColor,
+              toolbarHeight: appBarHeight,
+              automaticallyImplyLeading: false,
+              elevation: 1,
               leading: IconButton(
-                  onPressed: () async {
-                    if (await show(context, bookReportBackPressed)) {
-                      backPressed(bookService);
-                    }
-                  },
-                  icon: Icon(Icons.arrow_back_sharp)),
+                onPressed: () async {
+                  if (await show(context, bookReportBackPressed)) {
+                    backPressed(bookService);
+                  }
+                },
+                tooltip: backPress,
+                icon: Icon(
+                  Icons.arrow_back_sharp,
+                  color: appBasicColor,
+                ),
+              ),
               actions: [
-                TextButton(
-                    onPressed: () {
-                      if (bookReport.id == null || bookReport.id == '') {
-                        toastMsgWarning("도서를 선택해주세요").show(context);
-                      } else if (bookReport.stars == null ||
-                          bookReport.stars == 0.0) {
-                        toastMsgWarning("별점을 입력해주세요").show(context);
-                      } else if (bookReport.title == null ||
-                          bookReport.title == '') {
-                        toastMsgWarning("제목을 입력해주세요").show(context);
-                      } else if (bookReport.content == null ||
-                          bookReport.content == '') {
-                        toastMsgWarning("내용을 입력해주세요").show(context);
-                      } else {
-                        bookService.updateBookReport(
-                            index: widget.index, editDay: DateTime.now());
-                        Navigator.pop(context);
-                      }
-                      print(
-                          '1 : ${bookReport.id} 2 : ${bookReport.stars} 3 : ${bookReport.title} 4 : ${bookReport.content}');
-                    },
-                    child: Text(
-                      bookReportSave,
-                      style: TextStyle(color: Colors.white),
-                    ))
+                IconButton(
+                  onPressed: () {
+                    if (bookReport.id == null || bookReport.id == '') {
+                      showToast(fToast, insertReportBook, 2);
+                    } else if (bookReport.stars == null ||
+                        bookReport.stars == 0.0) {
+                      showToast(fToast, insertReportstars, 2);
+                    } else if (bookReport.title == null ||
+                        bookReport.title == '') {
+                      showToast(fToast, insertReportTitle, 2);
+                    } else if (bookReport.content == null ||
+                        bookReport.content == '') {
+                      showToast(fToast, insertReportContent, 2);
+                    } else {
+                      bookService.updateBookReport(
+                          index: widget.index, editDay: DateTime.now());
+                      Navigator.pop(context);
+                    }
+                    // print(
+                    // '1 : ${bookReport.id} 2 : ${bookReport.stars} 3 : ${bookReport.title} 4 : ${bookReport.content}');
+                  },
+                  splashColor: overlayColor,
+                  tooltip: bookReportSave,
+                  icon: Icon(
+                    Icons.done,
+                    color: appBasicColor,
+                  ),
+                )
               ],
             ),
             body: Column(
@@ -127,8 +148,13 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                             await selectBook(bookService, context);
                           },
                           style: ButtonStyle(
-                              overlayColor: MaterialStateProperty.all<Color>(
-                                  Colors.deepPurple)),
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(appBasicColor),
+                            overlayColor:
+                                MaterialStateProperty.all<Color>(overlayColor),
+                            shadowColor:
+                                MaterialStateProperty.all<Color>(overlayColor),
+                          ),
                           child: Container(
                             width: 120,
                             height: 50,
@@ -160,8 +186,11 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                   child: Row(children: <Widget>[
                     OutlinedButton(
                       style: ButtonStyle(
-                          maximumSize:
-                              MaterialStateProperty.all<Size>(Size(120, 40))),
+                        maximumSize:
+                            MaterialStateProperty.all<Size>(Size(120, 40)),
+                        overlayColor:
+                            MaterialStateProperty.all<Color>(overlayColor),
+                      ),
                       onPressed: () async {
                         startDate = await showCalenderPickerDialog(
                             context, bookReadStartDate, startDate);
@@ -174,15 +203,16 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                         children: [
                           Align(
                             alignment: Alignment.topLeft,
-                            child: Text(bookReadStartDate,
-                                style: TextStyle(
-                                    fontSize: 11, color: Colors.black)),
+                            child:
+                                Text(bookReadStartDate, style: textLabelStyle),
                           ),
                           SizedBox(height: 5),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child:
-                                Text(startDate[0].toString().substring(0, 10)),
+                            child: Text(
+                              startDate[0].toString().substring(0, 10),
+                              style: textStyleFocus15,
+                            ),
                           ),
                         ],
                       ),
@@ -190,8 +220,11 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                     Container(padding: EdgeInsets.all(5), child: Text("~")),
                     OutlinedButton(
                       style: ButtonStyle(
-                          maximumSize:
-                              MaterialStateProperty.all<Size>(Size(120, 40))),
+                        maximumSize:
+                            MaterialStateProperty.all<Size>(Size(120, 40)),
+                        overlayColor:
+                            MaterialStateProperty.all<Color>(overlayColor),
+                      ),
                       onPressed: () async {
                         endDate = await showCalenderPickerDialog(
                             context, bookReadEndDate, endDate);
@@ -203,14 +236,15 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                         children: [
                           Align(
                             alignment: Alignment.topLeft,
-                            child: Text(bookReadEndDate,
-                                style: TextStyle(
-                                    fontSize: 11, color: Colors.black)),
+                            child: Text(bookReadEndDate, style: textLabelStyle),
                           ),
                           SizedBox(height: 5),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(endDate[0].toString().substring(0, 10)),
+                            child: Text(
+                              endDate[0].toString().substring(0, 10),
+                              style: textStyleFocus15,
+                            ),
                           ),
                         ],
                       ),
@@ -231,7 +265,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                             alignment: Alignment.center,
                             child: Text(
                               bookStarRate,
-                              style: TextStyle(fontSize: 11),
+                              style: textLabelStyle,
                             ),
                           ),
                           RatingBar.builder(
@@ -240,7 +274,8 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                             allowHalfRating: true,
                             unratedColor: Colors.amber.withAlpha(50),
                             itemCount: 5,
-                            itemSize: 20.0,
+                            itemSize: iconSize20,
+                            glow: false,
                             itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
                             itemBuilder: (context, _) => Icon(
                               Icons.star,
@@ -262,7 +297,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                   child: TextField(
                     textInputAction: TextInputAction.done,
                     decoration: InputDecoration(
-                      hintText: "제목을 입력하세요",
+                      hintText: insertReportTitle,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(5),
@@ -282,7 +317,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                       textAlignVertical: TextAlignVertical.top,
                       controller: contentController,
                       decoration: InputDecoration(
-                          hintText: "내용을 입력하세요",
+                          hintText: insertReportContent,
                           border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5)))),
@@ -305,26 +340,25 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
     );
   }
 
-  MotionToast toastMsgWarning(String descroption) {
-    return MotionToast.warning(
-        title: Text(bookReportMissingElement), description: Text(descroption));
-  }
-
   Future<void> selectBook(BookService bookService, BuildContext context) async {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => SearchPage(pageOption: true)),
     );
-    setState(() {
-      bookService.bookReportList[widget.index].id =
-          bookService.bookSelectList.last.id;
-      bookService.bookReportList[widget.index].bookTitle =
-          bookService.bookSelectList.last.title;
-      bookService.bookReportList[widget.index].thumbnail =
-          bookService.bookSelectList.last.thumbnail;
-      bookService.bookReportList[widget.index].authors =
-          bookService.bookSelectList.last.authors;
-    });
+    if (bookService.bookSelectList.isNotEmpty) {
+      setState(
+        () {
+          bookService.bookReportList[widget.index].id =
+              bookService.bookSelectList.last.id;
+          bookService.bookReportList[widget.index].bookTitle =
+              bookService.bookSelectList.last.title;
+          bookService.bookReportList[widget.index].thumbnail =
+              bookService.bookSelectList.last.thumbnail;
+          bookService.bookReportList[widget.index].authors =
+              bookService.bookSelectList.last.authors;
+        },
+      );
+    }
   }
 
   backPressed(BookService bookService) {

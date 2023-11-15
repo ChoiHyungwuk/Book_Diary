@@ -1,5 +1,8 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/res/colors.dart';
+import 'package:flutter_project_book_search/res/strings.dart';
+import 'package:flutter_project_book_search/res/style.dart';
 
 Future<List<DateTime?>> showCalenderPickerDialog(
     BuildContext context, title, date) async {
@@ -7,32 +10,38 @@ Future<List<DateTime?>> showCalenderPickerDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(title),
+        title: Text(
+          title,
+          style: textStyleBlack20,
+        ),
         content: Container(
           width: 350,
           height: 300,
           child: CalendarDatePicker2(
-            config: CalendarDatePicker2Config(),
+            config: CalendarDatePicker2Config(
+              selectedDayHighlightColor: appBasicColor,
+            ),
             value: date,
             onValueChanged: (dates) => date = dates,
           ),
         ),
         actions: [
-          // 취소 버튼
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text("취소"),
-          ),
-          // 확인 버튼
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
             child: Text(
-              "확인",
-              style: TextStyle(color: Colors.pink),
+              cancel,
+              style: dialogNoStyle,
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              ok,
+              style: dialogOkStyle,
             ),
           ),
         ],

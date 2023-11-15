@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/res/strings.dart';
+import 'package:flutter_project_book_search/res/style.dart';
 
 Future<bool> show(BuildContext context, String title) async {
   bool choice = false;
@@ -6,24 +8,28 @@ Future<bool> show(BuildContext context, String title) async {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('${title}'),
+        title: Text(
+          title,
+          style: textStyleBlack15,
+        ),
         actions: [
-          // 취소 버튼
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text("취소"),
+            child: Text(
+              cancel,
+              style: dialogNoStyle,
+            ),
           ),
-          // 확인 버튼
           TextButton(
             onPressed: () {
               choice = true;
               Navigator.pop(context);
             },
             child: Text(
-              "확인",
-              style: TextStyle(color: Colors.pink),
+              ok,
+              style: dialogOkStyle,
             ),
           ),
         ],

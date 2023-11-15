@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book.dart';
+import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/service/bookService.dart';
 import 'package:provider/provider.dart';
 
 import '../res/strings.dart';
-import '../widget/book_tile.dart';
+import '../widget/tile/book_tile.dart';
 
 int searchOption = 30;
 
@@ -19,10 +20,10 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<DropdownMenuEntry<ViewCounts>> SearchEntries =
+    final List<DropdownMenuEntry<ViewCounts>> searchEntries =
         <DropdownMenuEntry<ViewCounts>>[];
     for (final ViewCounts string in ViewCounts.values) {
-      SearchEntries.add(
+      searchEntries.add(
         DropdownMenuEntry<ViewCounts>(value: string, label: string.label),
       );
     }
@@ -34,9 +35,10 @@ class SearchPage extends StatelessWidget {
         return SafeArea(
           child: Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.white,
-              toolbarHeight: toolbarHeight,
+              backgroundColor: appBarColor,
+              toolbarHeight: appBarHeight,
               automaticallyImplyLeading: false,
+              elevation: 1,
               title: Row(
                 children: [
                   Expanded(
@@ -67,6 +69,8 @@ class SearchPage extends StatelessWidget {
                                 onPressed: () {
                                   _searchController.clear();
                                 },
+                                color: textTitleColor,
+                                splashColor: overlayColor,
                                 icon: Icon(Icons.clear))),
                       ),
                     ),
@@ -79,7 +83,7 @@ class SearchPage extends StatelessWidget {
                       : DropdownMenu<ViewCounts>(
                           controller: _searchOptionController,
                           width: 95,
-                          dropdownMenuEntries: SearchEntries,
+                          dropdownMenuEntries: searchEntries,
                           initialSelection: ViewCounts.c,
                           label: Text(searchOptionStr),
                           onSelected: (value) {
@@ -91,16 +95,20 @@ class SearchPage extends StatelessWidget {
             ),
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: ListView.separated(
-                itemCount: bookLists.length,
-                separatorBuilder: (context, index) {
-                  return Divider();
-                },
-                itemBuilder: (context, index) {
-                  if (bookLists.isEmpty) return SizedBox();
-                  Book book = bookLists.elementAt(index);
-                  return BookTile(book: book, pageOption: pageOption);
-                },
+              child: GlowingOverscrollIndicator(
+                color: overlayColor,
+                axisDirection: AxisDirection.down,
+                child: ListView.separated(
+                  itemCount: bookLists.length,
+                  separatorBuilder: (context, index) {
+                    return Divider();
+                  },
+                  itemBuilder: (context, index) {
+                    if (bookLists.isEmpty) return SizedBox();
+                    Book book = bookLists.elementAt(index);
+                    return BookTile(book: book, pageOption: pageOption);
+                  },
+                ),
               ),
             ),
           ),
