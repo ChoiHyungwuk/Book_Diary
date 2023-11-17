@@ -147,7 +147,11 @@ class _BookReportPage extends State<BookReportPage> {
             },
             backgroundColor: appBasicColor,
             splashColor: overlayColor,
-            child: Icon(Icons.add_box_outlined),
+            tooltip: addReport,
+            child: Icon(
+              Icons.add_box_outlined,
+              size: iconBasicSize30,
+            ),
           ),
         );
       },

@@ -39,6 +39,20 @@ class SearchPage extends StatelessWidget {
               toolbarHeight: appBarHeight,
               automaticallyImplyLeading: false,
               elevation: 1,
+              leading: pageOption
+                  ? IconButton(
+                      splashColor: overlayColor,
+                      onPressed: () {
+                        bookService.bookSelectList.clear();
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_rounded,
+                        color: appBasicColor,
+                        size: iconBasicSize30,
+                      ),
+                    )
+                  : null,
               title: Row(
                 children: [
                   Expanded(
@@ -66,12 +80,20 @@ class SearchPage extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(5)),
                             ),
                             suffixIcon: IconButton(
-                                onPressed: () {
-                                  _searchController.clear();
-                                },
-                                color: textTitleColor,
-                                splashColor: overlayColor,
-                                icon: Icon(Icons.clear))),
+                              onPressed: () {
+                                _searchController.clear();
+                              },
+                              splashColor: overlayColor,
+                              icon: Icon(Icons.clear),
+                            ),
+                            suffixIconColor: MaterialStateColor.resolveWith(
+                              (states) {
+                                if (states.contains(MaterialState.focused)) {
+                                  return appBasicColor;
+                                }
+                                return greyColor;
+                              },
+                            )),
                       ),
                     ),
                   ),

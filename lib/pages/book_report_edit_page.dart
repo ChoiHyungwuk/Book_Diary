@@ -69,16 +69,13 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
     BookService bookService = context.read<BookService>();
     BookReport bookReport = bookService.bookReportList[widget.index];
 
-    return WillPopScope(
-      onWillPop: () {
-        return Future(
-          () async {
-            if (await show(context, bookReportBackPressed)) {
-              backPressed(bookService);
-            }
-            return false;
-          },
-        );
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop == true &&
+            await showAlertDialog(context, bookReportBackPressed)) {
+          backPressed(bookService);
+        }
       },
       child: SafeArea(
         child: GestureDetector(
@@ -94,14 +91,15 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
               elevation: 1,
               leading: IconButton(
                 onPressed: () async {
-                  if (await show(context, bookReportBackPressed)) {
+                  if (await showAlertDialog(context, bookReportBackPressed)) {
                     backPressed(bookService);
                   }
                 },
                 tooltip: backPress,
                 icon: Icon(
-                  Icons.arrow_back_sharp,
+                  Icons.arrow_back_rounded,
                   color: appBasicColor,
+                  size: iconBasicSize30,
                 ),
               ),
               actions: [
@@ -131,6 +129,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                   icon: Icon(
                     Icons.done,
                     color: appBasicColor,
+                    size: iconBasicSize30,
                   ),
                 )
               ],
@@ -211,6 +210,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               startDate[0].toString().substring(0, 10),
+                              maxLines: 1,
                               style: textStyleFocus15,
                             ),
                           ),
@@ -243,6 +243,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               endDate[0].toString().substring(0, 10),
+                              maxLines: 1,
                               style: textStyleFocus15,
                             ),
                           ),
@@ -296,6 +297,8 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                   padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
                   child: TextField(
                     textInputAction: TextInputAction.done,
+                    maxLines: 1,
+                    maxLength: 50,
                     decoration: InputDecoration(
                       hintText: insertReportTitle,
                       border: OutlineInputBorder(
@@ -321,9 +324,10 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                           border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5)))),
-                      maxLines: null,
-                      expands: true,
                       textInputAction: TextInputAction.done,
+                      minLines: 5,
+                      maxLines: null,
+                      maxLength: 500,
                       keyboardType: TextInputType.multiline,
                       onChanged: (value) {
                         reportContent = value;

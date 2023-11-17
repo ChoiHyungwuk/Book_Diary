@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 
-Future<bool> show(BuildContext context, String title) async {
+Future<bool> showAlertDialog(BuildContext context, String title) async {
   bool choice = false;
   await showDialog(
     context: context,

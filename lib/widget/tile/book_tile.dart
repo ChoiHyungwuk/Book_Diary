@@ -22,14 +22,12 @@ class BookTile extends StatelessWidget {
   Widget build(BuildContext context) {
     BookService bookService = context.read<BookService>();
 
-    return WillPopScope(
-      onWillPop: () {
-        return Future(
-          () async {
-            bookService.bookSelectList.clear();
-            return true;
-          },
-        );
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop == true) {
+          bookService.bookSelectList.clear();
+        }
       },
       child: Row(
         children: <Widget>[
