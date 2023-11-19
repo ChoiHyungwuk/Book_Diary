@@ -72,7 +72,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
-        if (didPop == true &&
+        if (didPop == false &&
             await showAlertDialog(context, bookReportBackPressed)) {
           backPressed(bookService);
         }
@@ -134,168 +134,166 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                 )
               ],
             ),
-            body: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 80,
-                  alignment: Alignment.center,
-                  child: bookReport.id == null
-                      ? ElevatedButton(
-                          onPressed: () async {
-                            bookService.bookSelectList.clear(); //검색목록 초기화
-                            await selectBook(bookService, context);
-                          },
+            body: Container(
+              padding: bodyPadding,
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 80,
+                    alignment: Alignment.center,
+                    child: bookReport.id == null
+                        ? ElevatedButton(
+                            onPressed: () async {
+                              bookService.bookSelectList.clear(); //검색목록 초기화
+                              await selectBook(bookService, context);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  appBasicColor),
+                              overlayColor: MaterialStateProperty.all<Color>(
+                                  overlayColor),
+                              shadowColor: MaterialStateProperty.all<Color>(
+                                  overlayColor),
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.add_circle,
+                                    size: iconBasicSize30,
+                                    color: whiteColor,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    bookSelect,
+                                    style: textStyleWhite15,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : ListTile(
+                            onTap: () async =>
+                                await selectBook(bookService, context),
+                            leading: Image.network(
+                                '${bookService.bookReportList[widget.index].thumbnail}',
+                                fit: BoxFit.fitHeight),
+                            title: Text(
+                                '${bookService.bookReportList[widget.index].bookTitle}'),
+                            subtitle: Text(
+                                '저자 : ${bookService.bookReportList[widget.index].authors!.join(", ")}'),
+                          ),
+                  ),
+                  Divider(),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      children: <Widget>[
+                        OutlinedButton(
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(appBasicColor),
+                            alignment: Alignment.center,
                             overlayColor:
                                 MaterialStateProperty.all<Color>(overlayColor),
-                            shadowColor:
+                          ),
+                          onPressed: () async {
+                            startDate = await showCalenderPickerDialog(
+                                context, bookReadStartDate, startDate);
+                            setStartDate(startDate);
+                            bookReport.startDate =
+                                startDate.first!.toIso8601String();
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                bookReadStartDate,
+                                style: textLabelStyle,
+                              ),
+                              Text(
+                                startDate[0].toString().substring(0, 10),
+                                maxLines: 1,
+                                style: textStyleFocus15,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          child: Text("~"),
+                        ),
+                        OutlinedButton(
+                          style: ButtonStyle(
+                            alignment: Alignment.center,
+                            overlayColor:
                                 MaterialStateProperty.all<Color>(overlayColor),
                           ),
-                          child: Container(
-                            width: 120,
-                            height: 50,
-                            child: Row(
-                              children: [
-                                Icon(Icons.add_circle),
-                                SizedBox(width: 5),
-                                Text(bookSelect),
-                              ],
-                            ),
+                          onPressed: () async {
+                            endDate = await showCalenderPickerDialog(
+                                context, bookReadEndDate, endDate);
+                            setEndDate(endDate);
+                            bookReport.endDate =
+                                endDate.first!.toIso8601String();
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                bookReadEndDate,
+                                style: textLabelStyle,
+                              ),
+                              Text(
+                                endDate[0].toString().substring(0, 10),
+                                maxLines: 1,
+                                style: textStyleFocus15,
+                              ),
+                            ],
                           ),
-                        )
-                      : ListTile(
-                          onTap: () async =>
-                              await selectBook(bookService, context),
-                          leading: Image.network(
-                              '${bookService.bookReportList[widget.index].thumbnail}',
-                              fit: BoxFit.fitHeight),
-                          title: Text(
-                              '${bookService.bookReportList[widget.index].bookTitle}'),
-                          subtitle: Text(
-                              '저자 : ${bookService.bookReportList[widget.index].authors!.join(", ")}'),
                         ),
-                ),
-                Divider(),
-                Container(
-                  height: 40,
-                  margin: EdgeInsets.all(5),
-                  child: Row(children: <Widget>[
-                    OutlinedButton(
-                      style: ButtonStyle(
-                        maximumSize:
-                            MaterialStateProperty.all<Size>(Size(120, 40)),
-                        overlayColor:
-                            MaterialStateProperty.all<Color>(overlayColor),
-                      ),
-                      onPressed: () async {
-                        startDate = await showCalenderPickerDialog(
-                            context, bookReadStartDate, startDate);
-                        setStartDate(startDate);
-                        bookReport.startDate =
-                            startDate.first!.toIso8601String();
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child:
-                                Text(bookReadStartDate, style: textLabelStyle),
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity,
                           ),
-                          SizedBox(height: 5),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              startDate[0].toString().substring(0, 10),
-                              maxLines: 1,
-                              style: textStyleFocus15,
-                            ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.amber),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Column(
+                            children: [
+                              Text(
+                                bookStarRate,
+                                style: textLabelStyle,
+                              ),
+                              RatingBar.builder(
+                                initialRating: 0,
+                                minRating: 1,
+                                allowHalfRating: true,
+                                unratedColor: Colors.amber.withAlpha(50),
+                                itemCount: 5,
+                                itemSize: iconSize20,
+                                glow: false,
+                                itemPadding:
+                                    EdgeInsets.symmetric(horizontal: 0.0),
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                                onRatingUpdate: (rating) {
+                                  starVal = rating;
+                                  bookReport.stars = starVal;
+                                },
+                                updateOnDrag: true,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Container(padding: EdgeInsets.all(5), child: Text("~")),
-                    OutlinedButton(
-                      style: ButtonStyle(
-                        maximumSize:
-                            MaterialStateProperty.all<Size>(Size(120, 40)),
-                        overlayColor:
-                            MaterialStateProperty.all<Color>(overlayColor),
-                      ),
-                      onPressed: () async {
-                        endDate = await showCalenderPickerDialog(
-                            context, bookReadEndDate, endDate);
-                        setEndDate(endDate);
-                        bookReport.endDate = endDate.first!.toIso8601String();
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(bookReadEndDate, style: textLabelStyle),
-                          ),
-                          SizedBox(height: 5),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              endDate[0].toString().substring(0, 10),
-                              maxLines: 1,
-                              style: textStyleFocus15,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        width: double.infinity,
-                      ),
-                    ),
-                    Container(
-                      width: 120,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.amber),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              bookStarRate,
-                              style: textLabelStyle,
-                            ),
-                          ),
-                          RatingBar.builder(
-                            initialRating: 0,
-                            minRating: 1,
-                            allowHalfRating: true,
-                            unratedColor: Colors.amber.withAlpha(50),
-                            itemCount: 5,
-                            itemSize: iconSize20,
-                            glow: false,
-                            itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
-                            itemBuilder: (context, _) => Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                            ),
-                            onRatingUpdate: (rating) {
-                              starVal = rating;
-                              bookReport.stars = starVal;
-                            },
-                            updateOnDrag: true,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ]),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-                  child: TextField(
+                  ),
+                  TextField(
                     textInputAction: TextInputAction.done,
                     maxLines: 1,
                     maxLength: 50,
@@ -312,31 +310,35 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                       bookReport.title = reportTitle;
                     },
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-                    child: TextField(
-                      textAlignVertical: TextAlignVertical.top,
-                      controller: contentController,
-                      decoration: InputDecoration(
-                          hintText: insertReportContent,
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)))),
-                      textInputAction: TextInputAction.done,
-                      minLines: 5,
-                      maxLines: null,
-                      maxLength: 500,
-                      keyboardType: TextInputType.multiline,
-                      onChanged: (value) {
-                        reportContent = value;
-                        bookReport.content = reportContent;
-                      },
+                  Expanded(
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                        child: TextField(
+                          textAlignVertical: TextAlignVertical.top,
+                          controller: contentController,
+                          decoration: InputDecoration(
+                            hintText: insertReportContent,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                          ),
+                          textInputAction: TextInputAction.newline,
+                          minLines: 5,
+                          maxLines: null,
+                          maxLength: 500,
+                          keyboardType: TextInputType.multiline,
+                          onChanged: (value) {
+                            reportContent = value;
+                            bookReport.content = reportContent;
+                          },
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -366,7 +368,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
   }
 
   backPressed(BookService bookService) {
-    bookService.deleteBookReport(index: widget.index);
     Navigator.pop(context);
+    bookService.deleteBookReport(index: widget.index);
   }
 }

@@ -21,11 +21,10 @@ class BookTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BookService bookService = context.read<BookService>();
-
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
-        if (didPop == true) {
+        if (didPop == false) {
           bookService.bookSelectList.clear();
         }
       },
@@ -60,7 +59,7 @@ class BookTile extends StatelessWidget {
                   style: textStyleBlack15,
                 ),
                 subtitle: Text(
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   "저자 : ${book.authors.join(", ")}\n출간일 : ${book.publishedDate}",
                   style: textStyleGrey13,
@@ -69,8 +68,8 @@ class BookTile extends StatelessWidget {
             ),
           ),
           Container(
+            padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
             alignment: Alignment.center,
-            width: 70,
             child: pageOption
                 ? ElevatedButton(
                     onPressed: () {
@@ -101,7 +100,7 @@ class BookTile extends StatelessWidget {
                           )
                         : Icon(Icons.star_border),
                   ),
-          )
+          ),
         ],
       ),
     );

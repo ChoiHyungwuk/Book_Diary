@@ -1,4 +1,6 @@
 //AppBar
+import 'package:flutter/material.dart';
+
 double appBarHeight = 70;
 double appBarTitleFontSize = 18;
 
@@ -24,3 +26,6 @@ double textSize30 = 30;
 double iconSize20 = 20;
 double iconMinSize25 = 25;
 double iconBasicSize30 = 30;
+
+//Padding
+var bodyPadding = EdgeInsetsDirectional.all(10);

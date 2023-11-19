@@ -23,7 +23,7 @@ String insertReportstars = "별점을 입력해주세요";
 
 String bookReportListView = "리스트형 보기";
 String bookReportAlbumView = "앨범형 보기";
-String bookReportBackPressed = "저장되지 않은 정보는 삭제됩니다.\n정말 뒤로 가시겠습니까?";
+String bookReportBackPressed = "저장되지 않은 정보는 삭제됩니다\n정말 뒤로 가시겠습니까?";
 String bookReportSave = "저장";
 String bookReportMissingElement = "입력하지 않은 값이 있습니다";
 String bookReportDelete = "삭제하시겠습니까?";

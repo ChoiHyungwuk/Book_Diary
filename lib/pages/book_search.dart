@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
+import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/service/bookService.dart';
 import 'package:provider/provider.dart';
@@ -103,11 +104,14 @@ class SearchPage extends StatelessWidget {
                   pageOption
                       ? Container()
                       : DropdownMenu<ViewCounts>(
-                          controller: _searchOptionController,
                           width: 95,
+                          controller: _searchOptionController,
                           dropdownMenuEntries: searchEntries,
                           initialSelection: ViewCounts.c,
-                          label: Text(searchOptionStr),
+                          label: Text(
+                            searchOptionStr,
+                            style: textLabelStyle,
+                          ),
                           onSelected: (value) {
                             searchOption = value?.val ?? 30;
                           },
@@ -120,16 +124,19 @@ class SearchPage extends StatelessWidget {
               child: GlowingOverscrollIndicator(
                 color: overlayColor,
                 axisDirection: AxisDirection.down,
-                child: ListView.separated(
-                  itemCount: bookLists.length,
-                  separatorBuilder: (context, index) {
-                    return Divider();
-                  },
-                  itemBuilder: (context, index) {
-                    if (bookLists.isEmpty) return SizedBox();
-                    Book book = bookLists.elementAt(index);
-                    return BookTile(book: book, pageOption: pageOption);
-                  },
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  child: ListView.separated(
+                    itemCount: bookLists.length,
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                    itemBuilder: (context, index) {
+                      if (bookLists.isEmpty) return SizedBox();
+                      Book book = bookLists.elementAt(index);
+                      return BookTile(book: book, pageOption: pageOption);
+                    },
+                  ),
                 ),
               ),
             ),

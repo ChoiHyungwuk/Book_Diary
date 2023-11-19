@@ -55,7 +55,7 @@ class _BookReportPage extends State<BookReportPage> {
             automaticallyImplyLeading: false,
             elevation: 1,
             title: Text(
-              "전체(${bookService.bookReportList.length})",
+              "전체 (${bookService.bookReportList.length})",
               style: appBarTitleStyle,
             ),
             actions: <Widget>[
@@ -90,48 +90,52 @@ class _BookReportPage extends State<BookReportPage> {
               ),
             ],
           ),
-          body: Column(
-            children: [
-              viewOption
-                  ? Expanded(
-                      child: GlowingOverscrollIndicator(
+          body: Container(
+            padding: bodyPadding,
+            child: Column(
+              children: [
+                viewOption
+                    ? Expanded(
+                        child: GlowingOverscrollIndicator(
+                          color: overlayColor,
+                          axisDirection: AxisDirection.down,
+                          child: ListView.separated(
+                            itemCount: bookService.bookReportList.length,
+                            separatorBuilder: (context, index) {
+                              return Divider();
+                            },
+                            itemBuilder: (context, index) {
+                              if (bookService.bookReportList.isEmpty) {
+                                return SizedBox();
+                              }
+                              BookReport bookReport =
+                                  bookService.bookReportList.elementAt(index);
+                              return BookReportListTile(bookReport: bookReport);
+                            },
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        child: GlowingOverscrollIndicator(
                         color: overlayColor,
                         axisDirection: AxisDirection.down,
-                        child: ListView.separated(
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3, childAspectRatio: 3 / 4.5),
                           itemCount: bookService.bookReportList.length,
-                          separatorBuilder: (context, index) {
-                            return Divider();
-                          },
                           itemBuilder: (context, index) {
                             if (bookService.bookReportList.isEmpty) {
                               return SizedBox();
                             }
                             BookReport bookReport =
                                 bookService.bookReportList.elementAt(index);
-                            return BookReportListTile(bookReport: bookReport);
+                            return BookReportAlbumTile(bookReport: bookReport);
                           },
                         ),
-                      ),
-                    )
-                  : Expanded(
-                      child: GlowingOverscrollIndicator(
-                      color: overlayColor,
-                      axisDirection: AxisDirection.down,
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3, childAspectRatio: 3 / 4),
-                        itemCount: bookService.bookReportList.length,
-                        itemBuilder: (context, index) {
-                          if (bookService.bookReportList.isEmpty) {
-                            return SizedBox();
-                          }
-                          BookReport bookReport =
-                              bookService.bookReportList.elementAt(index);
-                          return BookReportAlbumTile(bookReport: bookReport);
-                        },
-                      ),
-                    ))
-            ],
+                      ))
+              ],
+            ),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
@@ -150,6 +154,7 @@ class _BookReportPage extends State<BookReportPage> {
             tooltip: addReport,
             child: Icon(
               Icons.add_box_outlined,
+              color: whiteColor,
               size: iconBasicSize30,
             ),
           ),

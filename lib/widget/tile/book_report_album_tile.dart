@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/pages/book_report_view_page.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
@@ -20,7 +21,12 @@ class BookReportAlbumTile extends StatelessWidget {
       child: InkWell(
         overlayColor: MaterialStateProperty.all<Color>(overlayColor),
         onTap: () {
-          //TO-DO 터치 기능 추가
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookReportViewPage(bookReport: bookReport),
+            ),
+          );
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
