@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_book_search/Utils/Utils.dart';
+import 'package:flutter_project_book_search/data/book.dart';
+import 'package:flutter_project_book_search/utils/utils.dart';
 import 'package:flutter_project_book_search/pages/book_search.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
-import 'package:flutter_project_book_search/service/bookService.dart';
+import 'package:flutter_project_book_search/service/book_service.dart';
 import 'package:flutter_project_book_search/widget/dialog/dialog.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -18,9 +19,13 @@ class BookReportEditPage extends StatefulWidget {
   const BookReportEditPage({
     super.key,
     required this.index,
+    this.book,
+    this.editOption,
   });
 
   final int index;
+  final Book? book;
+  final bool? editOption; // true = 수정, false = 신규작성
 
   @override
   State<BookReportEditPage> createState() => _BookReportEditPageState();
@@ -29,6 +34,10 @@ class BookReportEditPage extends StatefulWidget {
 class _BookReportEditPageState extends State<BookReportEditPage> {
   List<DateTime?> startDate = [DateTime.now()]; //독서 시작일
   List<DateTime?> endDate = [DateTime.now()]; //독서 종료일
+  String? bookId; //책 고유ID
+  String? bookTitle; //책 이름
+  String? bookThumbnail; //책 썸네일
+  List? authors; //저자
   double? starVal; //별점
   String? reportTitle; //독후감 제목
   String? reportContent; //독후감 내용
@@ -36,6 +45,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
   late FToast fToast;
 
   TextEditingController contentController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
 
   void setStartDate(date) {
     setState(() {
@@ -68,6 +78,8 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
   Widget build(BuildContext context) {
     BookService bookService = context.read<BookService>();
     BookReport bookReport = bookService.bookReportList[widget.index];
+
+    initValues(bookReport, titleController, contentController);
 
     return PopScope(
       canPop: false,
@@ -105,24 +117,28 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    if (bookReport.id == null || bookReport.id == '') {
+                    if (bookId == null || bookId == '') {
                       showToast(fToast, insertReportBook, 2);
-                    } else if (bookReport.stars == null ||
-                        bookReport.stars == 0.0) {
+                    } else if (starVal == null || starVal == 0.0) {
                       showToast(fToast, insertReportstars, 2);
-                    } else if (bookReport.title == null ||
-                        bookReport.title == '') {
+                    } else if (reportTitle == null || reportTitle == '') {
                       showToast(fToast, insertReportTitle, 2);
-                    } else if (bookReport.content == null ||
-                        bookReport.content == '') {
+                    } else if (reportContent == null || reportContent == '') {
                       showToast(fToast, insertReportContent, 2);
                     } else {
                       bookService.updateBookReport(
-                          index: widget.index, editDay: DateTime.now());
+                          index: widget.index,
+                          id: bookId!,
+                          bookTitle: bookTitle!,
+                          thumbnail: bookThumbnail!,
+                          authors: authors!,
+                          stars: starVal!,
+                          startDate: startDate.first!.toIso8601String(),
+                          endDate: endDate.first!.toIso8601String(),
+                          title: reportTitle!,
+                          content: reportContent!);
                       Navigator.pop(context);
                     }
-                    // print(
-                    // '1 : ${bookReport.id} 2 : ${bookReport.stars} 3 : ${bookReport.title} 4 : ${bookReport.content}');
                   },
                   splashColor: overlayColor,
                   tooltip: bookReportSave,
@@ -142,7 +158,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                     width: double.infinity,
                     height: 80,
                     alignment: Alignment.center,
-                    child: bookReport.id == null
+                    child: bookId == null
                         ? ElevatedButton(
                             onPressed: () async {
                               bookService.bookSelectList.clear(); //검색목록 초기화
@@ -178,13 +194,16 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                         : ListTile(
                             onTap: () async =>
                                 await selectBook(bookService, context),
-                            leading: Image.network(
-                                '${bookService.bookReportList[widget.index].thumbnail}',
+                            leading: Image.network('$bookThumbnail',
                                 fit: BoxFit.fitHeight),
                             title: Text(
-                                '${bookService.bookReportList[widget.index].bookTitle}'),
+                              '$bookTitle',
+                              style: textStyleBlack15,
+                            ),
                             subtitle: Text(
-                                '저자 : ${bookService.bookReportList[widget.index].authors!.join(", ")}'),
+                              '저자 : ${authors!.join(", ")}',
+                              style: textStyleGrey13,
+                            ),
                           ),
                   ),
                   Divider(),
@@ -202,8 +221,6 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                             startDate = await showCalenderPickerDialog(
                                 context, bookReadStartDate, startDate);
                             setStartDate(startDate);
-                            bookReport.startDate =
-                                startDate.first!.toIso8601String();
                           },
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -234,8 +251,6 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                             endDate = await showCalenderPickerDialog(
                                 context, bookReadEndDate, endDate);
                             setEndDate(endDate);
-                            bookReport.endDate =
-                                endDate.first!.toIso8601String();
                           },
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -268,7 +283,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                                 style: textLabelStyle,
                               ),
                               RatingBar.builder(
-                                initialRating: 0,
+                                initialRating: bookReport.stars ?? 0,
                                 minRating: 1,
                                 allowHalfRating: true,
                                 unratedColor: Colors.amber.withAlpha(50),
@@ -283,7 +298,6 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                                 ),
                                 onRatingUpdate: (rating) {
                                   starVal = rating;
-                                  bookReport.stars = starVal;
                                 },
                                 updateOnDrag: true,
                               ),
@@ -294,7 +308,8 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                     ),
                   ),
                   TextField(
-                    textInputAction: TextInputAction.done,
+                    controller: titleController,
+                    textInputAction: TextInputAction.next,
                     maxLines: 1,
                     maxLength: 50,
                     decoration: InputDecoration(
@@ -307,7 +322,6 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                     ),
                     onChanged: (value) {
                       reportTitle = value;
-                      bookReport.title = reportTitle;
                     },
                   ),
                   Expanded(
@@ -331,7 +345,6 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                           keyboardType: TextInputType.multiline,
                           onChanged: (value) {
                             reportContent = value;
-                            bookReport.content = reportContent;
                           },
                         ),
                       ),
@@ -349,19 +362,17 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
   Future<void> selectBook(BookService bookService, BuildContext context) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SearchPage(pageOption: true)),
+      MaterialPageRoute(
+        builder: (context) => SearchPage(pageOption: true),
+      ),
     );
     if (bookService.bookSelectList.isNotEmpty) {
       setState(
         () {
-          bookService.bookReportList[widget.index].id =
-              bookService.bookSelectList.last.id;
-          bookService.bookReportList[widget.index].bookTitle =
-              bookService.bookSelectList.last.title;
-          bookService.bookReportList[widget.index].thumbnail =
-              bookService.bookSelectList.last.thumbnail;
-          bookService.bookReportList[widget.index].authors =
-              bookService.bookSelectList.last.authors;
+          bookId = bookService.bookSelectList.last.id;
+          bookTitle = bookService.bookSelectList.last.title;
+          bookThumbnail = bookService.bookSelectList.last.thumbnail;
+          authors = bookService.bookSelectList.last.authors;
         },
       );
     }
@@ -369,6 +380,25 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
 
   backPressed(BookService bookService) {
     Navigator.pop(context);
-    bookService.deleteBookReport(index: widget.index);
+    if (!(widget.editOption ?? false)) {
+      bookService.deleteBookReport(index: widget.index);
+    }
+  }
+
+  initValues(BookReport list, TextEditingController title,
+      TextEditingController content) {
+    if (widget.editOption ?? false) {
+      startDate = [DateTime.parse(list.startDate!)];
+      endDate = [DateTime.parse(list.endDate!)];
+      bookId = list.id;
+      bookTitle = list.bookTitle;
+      bookThumbnail = list.thumbnail;
+      authors = list.authors;
+      starVal = list.stars;
+      title.text = list.title ?? '';
+      content.text = list.content ?? '';
+      reportTitle = list.title ?? '';
+      reportContent = list.content ?? '';
+    }
   }
 }

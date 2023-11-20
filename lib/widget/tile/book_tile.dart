@@ -3,7 +3,7 @@ import 'package:flutter_project_book_search/data/book.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
-import 'package:flutter_project_book_search/service/bookService.dart';
+import 'package:flutter_project_book_search/service/book_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../pages/web_view_page.dart';

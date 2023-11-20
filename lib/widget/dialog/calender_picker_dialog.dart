@@ -14,7 +14,7 @@ Future<List<DateTime?>> showCalenderPickerDialog(
           title,
           style: textStyleBlack20,
         ),
-        content: Container(
+        content: SizedBox(
           width: 350,
           height: 300,
           child: CalendarDatePicker2(

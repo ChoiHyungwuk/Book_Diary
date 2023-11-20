@@ -58,9 +58,9 @@ class BookService extends ChangeNotifier {
 
   //좋아요 페이지 리스트
   savelikedBookList() {
-    List BookJsonList = likedBookList.map((Book) => Book.toJson()).toList();
+    List bookJsonList = likedBookList.map((book) => book.toJson()).toList();
 
-    String jsonString = jsonEncode(BookJsonList);
+    String jsonString = jsonEncode(bookJsonList);
 
     prefs.setString('likedBookList', jsonString);
   }
@@ -70,17 +70,17 @@ class BookService extends ChangeNotifier {
 
     if (jsonString == null) return;
 
-    List BookJsonList = jsonDecode(jsonString);
+    List bookJsonList = jsonDecode(jsonString);
 
-    likedBookList = BookJsonList.map((json) => Book.fromJson(json)).toList();
+    likedBookList = bookJsonList.map((json) => Book.fromJson(json)).toList();
   }
 
   //독후감 페이지 리스트
   saveBookReportList() {
-    List BookJsonList =
-        bookReportList.map((BookReport) => BookReport.toJson()).toList();
+    List bookJsonList =
+        bookReportList.map((bookReport) => bookReport.toJson()).toList();
 
-    String jsonString = jsonEncode(BookJsonList);
+    String jsonString = jsonEncode(bookJsonList);
 
     prefs.setString('bookReportList', jsonString);
   }
@@ -90,10 +90,10 @@ class BookService extends ChangeNotifier {
 
     if (jsonString == null) return;
 
-    List BookJsonList = jsonDecode(jsonString);
+    List bookJsonList = jsonDecode(jsonString);
 
     bookReportList =
-        BookJsonList.map((json) => BookReport.fromJson(json)).toList();
+        bookJsonList.map((json) => BookReport.fromJson(json)).toList();
   }
 
   createInitReport({required DateTime editDay}) {
@@ -102,18 +102,36 @@ class BookService extends ChangeNotifier {
     saveBookReportList();
   }
 
-  createBookReport({required DateTime editDay}) {
-    BookReport report = BookReport(editDay: editDay);
-    bookReportList.add(report);
-    notifyListeners();
-    saveBookReportList();
-  }
+  // createBookReport({required DateTime editDay}) {
+  //   BookReport report = BookReport(editDay: editDay);
+  //   bookReportList.add(report);
+  //   notifyListeners();
+  //   saveBookReportList();
+  // }
 
-  updateBookReport({required int index, DateTime? editDay}) {
+  updateBookReport({
+    required int index,
+    required String id,
+    required String bookTitle,
+    required String thumbnail,
+    required List authors,
+    required double stars,
+    required String startDate,
+    required String endDate,
+    required String title,
+    required String content,
+  }) {
     BookReport report = bookReportList[index];
-    report.editDay = editDay ?? DateTime.now();
-    report.startDate = report.startDate ?? DateTime.now().toIso8601String();
-    report.endDate = report.endDate ?? DateTime.now().toIso8601String();
+    report.editDay = DateTime.now();
+    report.id = id;
+    report.bookTitle = bookTitle;
+    report.thumbnail = thumbnail;
+    report.authors = authors;
+    report.stars = stars;
+    report.startDate = startDate;
+    report.endDate = endDate;
+    report.title = title;
+    report.content = content;
     notifyListeners();
     saveBookReportList();
   }
