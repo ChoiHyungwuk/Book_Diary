@@ -380,7 +380,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
 
   backPressed(BookService bookService) {
     Navigator.pop(context);
-    if (!(widget.editOption ?? false)) {
+    if (widget.editOption ?? true) {
       bookService.deleteBookReport(index: widget.index);
     }
   }

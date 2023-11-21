@@ -5,6 +5,7 @@ String bookReport = "독후감";
 String liked = "좋아요";
 String searchBooks = "책 검색";
 String backPress = "뒤로가기";
+String backPressForExit = "뒤로가기 버튼을 한번 더 누르면\n앱이 종료됩니다";
 
 String select = "선택";
 String cancel = "취소";
