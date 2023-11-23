@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
 import 'package:flutter_project_book_search/main.dart';
-import 'package:flutter_project_book_search/pages/book_report_edit_page.dart';
+import 'package:flutter_project_book_search/pages/book_report_pages/book_report_edit_page.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_project_book_search/widget/tile/book_report_album_tile.d
 import 'package:flutter_project_book_search/widget/tile/book_report_list_tile.dart';
 import 'package:provider/provider.dart';
 
-import '../res/strings.dart';
+import '../../res/strings.dart';
 
 class BookReportPage extends StatefulWidget {
   const BookReportPage({super.key});
@@ -50,7 +50,6 @@ class _BookReportPage extends State<BookReportPage> {
       builder: (context, bookService, child) {
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: appBarColor,
             toolbarHeight: appBarHeight,
             automaticallyImplyLeading: false,
             elevation: 1,

@@ -1,8 +1,6 @@
-String searchOptionStr = "표시 개수";
-String searchHint = "검색어를 입력해주세요";
-
 String bookReport = "독후감";
 String liked = "좋아요";
+String bookToReadLater = "나중에 읽을 책";
 String searchBooks = "책 검색";
 String backPress = "뒤로가기";
 String backPressForExit = "뒤로가기 버튼을 한번 더 누르면\n앱이 종료됩니다";
@@ -13,6 +11,20 @@ String ok = "확인";
 String modify = "수정";
 String delete = "삭제";
 String editDay = "작성일";
+
+//book Search Page Use
+String searchOptionStr = "표시 개수";
+String searchHint = "검색어를 입력해주세요";
+String searchClose = "닫기";
+
+String searchOptions = "검색 옵션";
+String searchOptionAll = "전체";
+String searchOptionAuthors = "저자";
+String searchOptionTitle = "제목";
+
+String searchRegist = "최근 검색 기록";
+String searchRegistDeleteAll = "전체 삭제";
+//book Search Page Use
 
 //book Report Page Use
 String addReport = "새 독후감";
@@ -37,10 +49,10 @@ String bookStarRate = "별점";
 //book Report Page Use
 
 enum ViewCounts {
-  a('10', 10),
-  b('20', 20),
-  c('30', 30),
-  d('40', 40);
+  val_10('10', 10),
+  val_20('20', 20),
+  val_30('30', 30),
+  val_40('40', 40);
 
   const ViewCounts(this.label, this.val);
   final String label;

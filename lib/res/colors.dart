@@ -14,3 +14,8 @@ Color greyColor = Colors.grey;
 //Background
 Color appBarColor = Colors.white;
 Color transparentColor = Colors.transparent;
+
+//TextField
+var focusBorderColor = OutlineInputBorder(
+  borderSide: BorderSide(color: appBasicColor, width: 2.5),
+);

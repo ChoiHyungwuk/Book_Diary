@@ -7,8 +7,8 @@ import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/service/book_service.dart';
 import 'package:provider/provider.dart';
 
-class BookTile extends StatelessWidget {
-  const BookTile({
+class SearchRegistTile extends StatelessWidget {
+  const SearchRegistTile({
     super.key,
     required this.book,
     required this.pageOption,

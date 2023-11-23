@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/data/book_meta.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
+import 'package:flutter_project_book_search/res/apiKey.dart';
 
 import '../data/book.dart';
 import '../main.dart';
@@ -16,6 +18,7 @@ class BookService extends ChangeNotifier {
   }
 
   List<Book> bookList = []; // 책 목록
+  List<BookMetaData> bookMetaData = []; // 카카오 book api 메타 데이터
   List<Book> likedBookList = []; //좋아요 한 책 목록
   List<Book> bookSelectList = []; //책 선택 리스트
   List<BookReport> bookReportList = []; //독후감 리스트
@@ -31,26 +34,43 @@ class BookService extends ChangeNotifier {
     savelikedBookList();
   }
 
-  void search(String q, int maxResults, List<Book> list) async {
+  void searchBooks(String query, int maxResults, List<Book> list) async {
     list.clear(); // 검색 버튼 누를때 이전 데이터들을 지워주기
+    bookMetaData.clear();
 
-    if (q.isNotEmpty) {
+    if (query.isNotEmpty) {
       Response res = await Dio().get(
-        "https://www.googleapis.com/books/v1/volumes?q=$q&startIndex=0&maxResults=$maxResults",
+        "https://dapi.kakao.com/v3/search/book?query=$query",
+        options: Options(
+          headers: {
+            'Authorization': kakaoAPIKey,
+          },
+        ),
       );
-      List items = res.data["items"];
+      List items = res.data["documents"];
+
+      bookMetaData.add(
+        BookMetaData(
+          isEnd: res.data["meta"]['is_end'],
+          totalCount: res.data["meta"]['total_count'],
+          pageableCount: res.data["meta"]['pageable_count'],
+        ),
+      );
 
       for (Map<String, dynamic> item in items) {
-        Book book = Book(
-          id: item['id'],
-          title: item['volumeInfo']['title'] ?? "",
-          authors: (item['volumeInfo']['authors'] ?? []) as List,
-          publishedDate: item['volumeInfo']['publishedDate'] ?? "",
-          thumbnail: item['volumeInfo']['imageLinks']?['thumbnail'] ??
-              "https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo-available_87543-11093.jpg",
-          previewLink: item['volumeInfo']['previewLink'] ?? "",
-        );
-        list.add(book);
+        if (item['thumbnail'] != "") {
+          //썸네일 이미지 없는 것은 리스트에서 제외
+          Book book = Book(
+            id: item['isbn'],
+            title: item['title'] ?? '',
+            authors: (item['authors'] ?? []) as List,
+            publishedDate: item['datetime']?.toString().substring(0, 10) ?? '',
+            contents: item['contents'] ?? '',
+            thumbnail: item['thumbnail'],
+            previewLink: item['url'] ?? '',
+          );
+          list.add(book);
+        }
       }
     }
     notifyListeners();

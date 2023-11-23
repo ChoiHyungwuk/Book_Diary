@@ -42,3 +42,11 @@ void showToast(FToast fToast, String msg, int duration) {
   //   },
   // );
 }
+
+double setWidthSize(context, double val) {
+  return MediaQuery.of(context).size.width * val;
+}
+
+double setHeightSize(context, double val) {
+  return MediaQuery.of(context).size.height * val;
+}

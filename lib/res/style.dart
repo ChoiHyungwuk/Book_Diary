@@ -22,6 +22,10 @@ TextStyle textStyleWhite15 =
     TextStyle(fontSize: textBasicSize15, color: whiteColor);
 TextStyle textStyleGrey15 =
     TextStyle(fontSize: textBasicSize15, color: greyColor);
+TextStyle textStyleHighlight15 = TextStyle(
+    fontSize: textBasicSize15,
+    color: appBasicColor,
+    fontWeight: FontWeight.bold);
 TextStyle textStyleFocus15 =
     TextStyle(fontSize: textBasicSize15, color: textFocusColor);
 

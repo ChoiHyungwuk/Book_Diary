@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
-import 'package:flutter_project_book_search/pages/book_report_edit_page.dart';
+import 'package:flutter_project_book_search/pages/book_report_pages/book_report_edit_page.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
@@ -22,7 +22,6 @@ class BookReportViewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: appBarColor,
         toolbarHeight: appBarHeight,
         automaticallyImplyLeading: false,
         elevation: 1,
@@ -131,7 +130,7 @@ class BookReportViewPage extends StatelessWidget {
                         child: Row(
                           children: <Widget>[
                             Image.network(
-                              bookReport.thumbnail ?? '',
+                              bookReport.thumbnail!,
                               height: 150,
                             ),
                             SizedBox(width: 10),

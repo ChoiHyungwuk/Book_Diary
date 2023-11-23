@@ -35,7 +35,7 @@ migrate_working_dir/
 /build/
 coverage/
 lib/generated_plugin_registrant.dart
-# For library packages, don¡¯t commit the pubspec.lock file.
+# For library packages, donï¿½ï¿½t commit the pubspec.lock file.
 # Regenerating the pubspec.lock file lets you test your package against the latest compatible versions of its dependencies.
 # See https://dart.dev/guides/libraries/private-files#pubspeclock
 #pubspec.lock
@@ -94,5 +94,9 @@ app.*.map.json
 /android/app/release
 app.*.symbols
 key.properties
+
+# API Key
+lib\res\apiKey.dart
+apiKey.dart
 
 # End of https://www.toptal.com/developers/gitignore/api/flutter

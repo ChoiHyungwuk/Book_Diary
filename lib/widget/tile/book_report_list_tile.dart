@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_book_search/pages/book_report_view_page.dart';
+import 'package:flutter_project_book_search/pages/book_report_pages/book_report_view_page.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
@@ -28,8 +28,7 @@ class BookReportListTile extends StatelessWidget {
         );
       },
       leading: Image.network(
-        bookReport.thumbnail ??
-            "https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo-available_87543-11093.jpg",
+        bookReport.thumbnail!,
         fit: BoxFit.fitHeight,
       ),
       title: Text(

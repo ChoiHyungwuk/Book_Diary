@@ -11,9 +11,9 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-import '../data/book_report.dart';
-import '../res/strings.dart';
-import '../widget/dialog/calender_picker_dialog.dart';
+import '../../data/book_report.dart';
+import '../../res/strings.dart';
+import '../../widget/dialog/calender_picker_dialog.dart';
 
 class BookReportEditPage extends StatefulWidget {
   const BookReportEditPage({
@@ -97,7 +97,6 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
           child: Scaffold(
             resizeToAvoidBottomInset: false, //화면 밀림방지
             appBar: AppBar(
-              backgroundColor: appBarColor,
               toolbarHeight: appBarHeight,
               automaticallyImplyLeading: false,
               elevation: 1,
@@ -319,6 +318,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                           Radius.circular(5),
                         ),
                       ),
+                      focusedBorder: focusBorderColor,
                     ),
                     onChanged: (value) {
                       reportTitle = value;
@@ -337,6 +337,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                                 Radius.circular(5),
                               ),
                             ),
+                            focusedBorder: focusBorderColor,
                           ),
                           textInputAction: TextInputAction.newline,
                           minLines: 5,
