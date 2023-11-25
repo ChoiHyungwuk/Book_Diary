@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book.dart';
+import 'package:flutter_project_book_search/main.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
+import 'package:flutter_project_book_search/res/enums.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/service/book_service.dart';
 import 'package:flutter_project_book_search/utils/utils.dart';
+import 'package:flutter_project_book_search/widget/dialog/two_button_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../res/strings.dart';
 import '../widget/tile/book_tile.dart';
 
-int searchOption = 30;
-
 class SearchPage extends StatefulWidget {
-  SearchPage({super.key, required this.pageOption});
+  const SearchPage({super.key, required this.pageOption});
 
   final bool pageOption;
 
@@ -22,28 +23,43 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  bool isSearch = false;
+  bool isSearch = false; //검색입력창 포커스 제어 플래그
+  bool isSearchEmpty = false; //검색결과 없을 때
+  String lastSearchText = '';
+  String optionButtonText = searchTypeOptionAll;
+
+  int totalPage = 1;
+  int currentPage = 1;
+  bool isEnd = true;
+
+  int selectSearchTypeOption = 0;
+  var selectSearchSortOption = SearchSort.accuracy;
 
   FocusNode searchFocusNode = FocusNode();
+  FocusNode searchOptionButtonFocusNode = FocusNode();
 
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _searchOptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (!widget.pageOption) {
+      lastSearchText = prefs.getString('lastSearchText') ?? '';
+      _searchController.text = lastSearchText;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<DropdownMenuEntry<ViewCounts>> searchEntries =
-        <DropdownMenuEntry<ViewCounts>>[];
-    for (final ViewCounts string in ViewCounts.values) {
-      searchEntries.add(
-        DropdownMenuEntry<ViewCounts>(value: string, label: string.label),
-      );
-    }
-
     return Consumer<BookService>(
       builder: (context, bookService, child) {
         List<Book> bookLists = widget.pageOption
             ? bookService.bookSelectList
             : bookService.bookList;
+
+        isEnd = (bookService.bookMetaData.isEmpty || currentPage == 33)
+            ? false
+            : bookService.bookMetaData.first.isEnd;
         return SafeArea(
           child: GestureDetector(
             onTap: () {
@@ -69,168 +85,122 @@ class _SearchPageState extends State<SearchPage> {
                       )
                     : null,
                 title: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
+                  children: <Widget>[
+                    Flexible(
+                      child: SizedBox(
                         height: 57,
-                        alignment: AlignmentDirectional.center,
-                        child: InkWell(
-                          onTap: () {
-                            searchFocusNode.requestFocus();
-                            setState(() {
-                              isSearch = true;
-                            });
-                          },
-                          child: AbsorbPointer(
-                            absorbing: true,
-                            child: TextField(
-                              textInputAction: TextInputAction.done,
-                              onSubmitted: (value) {
+                        child: Stack(
+                          children: <Widget>[
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: IconButton(
+                                onPressed: () {
+                                  _searchController.clear();
+                                },
+                                splashColor: overlayColor,
+                                icon: Icon(Icons.cancel_rounded),
+                              ),
+                            ),
+                            InkWell(
+                              highlightColor: transparentColor,
+                              overlayColor:
+                                  MaterialStateProperty.all(transparentColor),
+                              onTap: () {
+                                searchFocusNode.requestFocus();
                                 setState(() {
-                                  isSearch = false;
+                                  isSearch = true;
                                 });
-                                bookService.searchBooks(
-                                    value, searchOption, bookLists);
                               },
-                              controller: _searchController,
-                              focusNode: searchFocusNode,
-                              cursorColor: Colors.grey,
-                              decoration: InputDecoration(
-                                prefixIcon:
-                                    Icon(Icons.search, color: Colors.grey),
-                                hintText: searchHint,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    _searchController.clear();
-                                  },
-                                  splashColor: overlayColor,
-                                  icon: Icon(Icons.cancel_rounded),
-                                ),
-                                suffixIconColor: MaterialStateColor.resolveWith(
-                                  (states) {
-                                    if (states
-                                        .contains(MaterialState.focused)) {
-                                      return appBasicColor;
+                              child: AbsorbPointer(
+                                absorbing: true,
+                                child: TextField(
+                                  textInputAction: TextInputAction.done,
+                                  onSubmitted: (value) async {
+                                    if (!await checkNetworkState(context)) {
+                                      return;
                                     }
-                                    return greyColor;
+                                    lastSearchText = value;
+                                    isSearch = false;
+                                    currentPage = 1;
+                                    bookService.searchBooks(
+                                        value,
+                                        bookLists,
+                                        currentPage,
+                                        selectSearchSortOption.name);
+                                    if (!widget.pageOption) {
+                                      prefs.setString(
+                                          'lastSearchText', lastSearchText);
+                                      bookService.addBookSearchList(
+                                          text: lastSearchText);
+                                    }
                                   },
+                                  controller: _searchController,
+                                  focusNode: searchFocusNode,
+                                  cursorColor: Colors.grey,
+                                  decoration: InputDecoration(
+                                    prefixIcon:
+                                        Icon(Icons.search, color: Colors.grey),
+                                    hintText: searchHint,
+                                    border: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    widget.pageOption
-                        ? Container()
-                        : DropdownMenu<ViewCounts>(
-                            width: 95,
-                            controller: _searchOptionController,
-                            dropdownMenuEntries: searchEntries,
-                            initialSelection: ViewCounts.val_30,
-                            label: Text(
-                              searchOptionStr,
-                              style: textLabelStyle,
-                            ),
-                            onSelected: (value) {
-                              searchOption = value?.val ?? 30;
-                            },
-                          ),
                   ],
                 ),
               ),
               body: isSearch
-                  ? searchContainer()
-                  : Padding(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 40),
-                      child: GlowingOverscrollIndicator(
-                        color: overlayColor,
-                        axisDirection: AxisDirection.down,
-                        child: Scrollbar(
-                          thumbVisibility: true,
-                          child: ListView.separated(
-                            itemCount: bookLists.length,
-                            separatorBuilder: (context, index) {
-                              return Divider(
-                                height: 5,
-                              );
-                            },
-                            itemBuilder: (context, index) {
-                              if (bookLists.isEmpty) return SizedBox();
-                              Book book = bookLists.elementAt(index);
-                              return BookTile(
-                                  book: book, pageOption: widget.pageOption);
-                            },
+                  ? searchContainer(bookService)
+                  : bookLists.isEmpty
+                      ? Center(
+                          child: Text(
+                            searchEmpty,
+                            style: textStyleBlack20,
+                          ),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.fromLTRB(10, 10, 10, 40),
+                          child: GlowingOverscrollIndicator(
+                            color: overlayColor,
+                            axisDirection: AxisDirection.down,
+                            child: Scrollbar(
+                              thumbVisibility: true,
+                              child: ListView.separated(
+                                itemCount: bookLists.length,
+                                separatorBuilder: (context, index) {
+                                  return Divider(
+                                    height: 5,
+                                  );
+                                },
+                                itemBuilder: (context, index) {
+                                  if (bookLists.isEmpty) return SizedBox();
+                                  Book book = bookLists.elementAt(index);
+                                  return BookTile(
+                                      book: book,
+                                      pageOption: widget.pageOption);
+                                },
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
               bottomSheet: isSearch
                   ? null
-                  : Container(
-                      width: double.infinity,
-                      height: 40,
-                      child: Row(
-                        children: <Widget>[
-                          FilledButton(
-                            onPressed: () {},
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(transparentColor),
-                              overlayColor:
-                                  MaterialStateProperty.all(overlayColor),
-                              fixedSize: MaterialStateProperty.all<Size>(
-                                Size.fromWidth(
-                                  setWidthSize(context, 0.5),
-                                ),
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              size: iconBasicSize30,
-                              color: appBasicColor,
-                            ),
-                          ),
-                          Container(
-                              height: 30,
-                              child: VerticalDivider(
-                                width: 0,
-                              )),
-                          FilledButton(
-                            onPressed: () {},
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(transparentColor),
-                              overlayColor:
-                                  MaterialStateProperty.all(overlayColor),
-                              fixedSize: MaterialStateProperty.all<Size>(
-                                Size.fromWidth(
-                                  setWidthSize(context, 0.5),
-                                ),
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: iconBasicSize30,
-                              color: appBasicColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  : pageController(bookService, bookLists, context),
             ),
           ),
         );
@@ -238,7 +208,64 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Container searchContainer() {
+  Container pageController(
+      BookService bookService, List<Book> bookLists, BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 40,
+      child: Row(
+        children: <Widget>[
+          Theme(
+            data: ThemeData(
+              splashColor: overlayColor,
+            ),
+            child: FilledButton(
+              onPressed: prePage(bookService, bookLists),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(transparentColor),
+                overlayColor: MaterialStateProperty.all(overlayColor),
+                fixedSize: MaterialStateProperty.all<Size>(
+                  Size.fromWidth(
+                    setWidthSize(context, 0.5),
+                  ),
+                ),
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: iconBasicSize30,
+                color: currentPage == 1 ? greyColor : appBasicColor,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 30,
+            child: VerticalDivider(
+              width: 0,
+            ),
+          ),
+          FilledButton(
+            onPressed: nextPage(bookService, bookLists),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(transparentColor),
+              overlayColor: MaterialStateProperty.all(overlayColor),
+              fixedSize: MaterialStateProperty.all<Size>(
+                Size.fromWidth(
+                  setWidthSize(context, 0.5),
+                ),
+              ),
+            ),
+            child: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: iconBasicSize30,
+              color: isEnd ? greyColor : appBasicColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container searchContainer(BookService bookService) {
     return Container(
       padding: bodyPadding,
       child: Column(
@@ -246,23 +273,211 @@ class _SearchPageState extends State<SearchPage> {
           Row(
             children: <Widget>[
               OutlinedButton(
-                onPressed: () async {
-                  await showModalBottomSheet<void>(
+                style: ButtonStyle(
+                  overlayColor: MaterialStateProperty.all(overlayColor),
+                ),
+                onPressed: () {
+                  FocusScope.of(context).unfocus();
+                  showModalBottomSheet(
                     context: context,
                     builder: (BuildContext context) {
-                      return SizedBox(
-                        height: 200,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(searchOptions),
-                              ElevatedButton(
-                                child: Text(searchOptionAll),
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                            ],
+                      return StatefulBuilder(
+                        builder: (context, setState) => Container(
+                          padding: bodyPadding,
+                          height: 300,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                    child: TextButton(
+                                      style: ButtonStyle(
+                                          overlayColor:
+                                              MaterialStateProperty.all(
+                                                  overlayColor)),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        searchClose,
+                                        style: textStyleBlack15,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  searchTypeOptions,
+                                  style: textStyleBlack20,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    OutlinedButton(
+                                      focusNode: searchOptionButtonFocusNode,
+                                      style: ButtonStyle(
+                                        fixedSize: MaterialStateProperty.all(
+                                          Size.fromWidth(
+                                            setWidthSize(context, 0.30),
+                                          ),
+                                        ),
+                                        side: selectSearchTypeOption == 0
+                                            ? focusButtonBorder
+                                            : outFocusButtonBorder,
+                                        overlayColor:
+                                            MaterialStateProperty.all<Color>(
+                                                overlayColor),
+                                      ),
+                                      child: Text(
+                                        searchTypeOptionAll,
+                                        style: textStyleBlack15,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          optionButtonTextUpdate(
+                                              searchTypeOptionAll);
+                                          selectSearchTypeOption = 0;
+                                        });
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    OutlinedButton(
+                                      style: ButtonStyle(
+                                        fixedSize: MaterialStateProperty.all(
+                                          Size.fromWidth(
+                                            setWidthSize(context, 0.30),
+                                          ),
+                                        ),
+                                        side: selectSearchTypeOption == 1
+                                            ? focusButtonBorder
+                                            : outFocusButtonBorder,
+                                        overlayColor:
+                                            MaterialStateProperty.all<Color>(
+                                                overlayColor),
+                                      ),
+                                      child: Text(
+                                        searchTypeOptionAuthors,
+                                        style: textStyleBlack15,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          optionButtonTextUpdate(
+                                              searchTypeOptionAuthors);
+                                          selectSearchTypeOption = 1;
+                                        });
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    OutlinedButton(
+                                      style: ButtonStyle(
+                                        fixedSize: MaterialStateProperty.all(
+                                          Size.fromWidth(
+                                            setWidthSize(context, 0.30),
+                                          ),
+                                        ),
+                                        side: selectSearchTypeOption == 2
+                                            ? focusButtonBorder
+                                            : outFocusButtonBorder,
+                                        overlayColor:
+                                            MaterialStateProperty.all<Color>(
+                                                overlayColor),
+                                      ),
+                                      child: Text(
+                                        searchTypeOptionTitle,
+                                        style: textStyleBlack15,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          optionButtonTextUpdate(
+                                              searchTypeOptionTitle);
+                                          selectSearchTypeOption = 2;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  searchSortOptions,
+                                  style: textStyleBlack20,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    OutlinedButton(
+                                      focusNode: searchOptionButtonFocusNode,
+                                      style: ButtonStyle(
+                                        fixedSize: MaterialStateProperty.all(
+                                          Size.fromWidth(
+                                            setWidthSize(context, 0.30),
+                                          ),
+                                        ),
+                                        side: selectSearchSortOption ==
+                                                SearchSort.accuracy
+                                            ? focusButtonBorder
+                                            : outFocusButtonBorder,
+                                        overlayColor:
+                                            MaterialStateProperty.all<Color>(
+                                                overlayColor),
+                                      ),
+                                      child: Text(
+                                        searchSortOptionAccuracy,
+                                        style: textStyleBlack15,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          selectSearchSortOption =
+                                              SearchSort.accuracy;
+                                        });
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    OutlinedButton(
+                                      style: ButtonStyle(
+                                        fixedSize: MaterialStateProperty.all(
+                                          Size.fromWidth(
+                                            setWidthSize(context, 0.30),
+                                          ),
+                                        ),
+                                        side: selectSearchSortOption ==
+                                                SearchSort.latest
+                                            ? focusButtonBorder
+                                            : outFocusButtonBorder,
+                                        overlayColor:
+                                            MaterialStateProperty.all<Color>(
+                                                overlayColor),
+                                      ),
+                                      child: Text(
+                                        searchSortOptionLatest,
+                                        style: textStyleBlack15,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          selectSearchSortOption =
+                                              SearchSort.latest;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -272,7 +487,7 @@ class _SearchPageState extends State<SearchPage> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      '전체',
+                      optionButtonText,
                       style: textStyleBlack15,
                     ),
                     Icon(
@@ -287,44 +502,124 @@ class _SearchPageState extends State<SearchPage> {
                 child: SizedBox(width: double.infinity),
               ),
               TextButton(
+                style: ButtonStyle(
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(overlayColor)),
                 onPressed: () {
                   setState(() {
                     isSearch = false;
+                    _searchController.text = lastSearchText;
                     FocusScope.of(context).unfocus();
                   });
                 },
                 child: Text(
                   searchClose,
-                  style: textStyleHighlight15,
+                  style: textStyleBlack15,
                 ),
               ),
             ],
           ),
           Divider(),
-          Text(
-            searchOptionTitle,
-            style: textStyleBlack15,
+          Row(
+            children: <Widget>[
+              Text(
+                searchRegist,
+                style: textStyleBlack15,
+              ),
+              Expanded(
+                child: SizedBox(width: double.infinity),
+              ),
+              TextButton(
+                style: ButtonStyle(
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(overlayColor)),
+                onPressed: () async {
+                  if (await showTwoButtonDialog(
+                      context, searchRegistDeleteAllMsg)) {
+                    bookService.deleteAllBookSearchList();
+                  }
+                },
+                child: Text(
+                  searchRegistDeleteAll,
+                  style: textStyleHighlight15,
+                ),
+              ),
+            ],
           ),
-          // Expanded(
-          //   child: ListView.separated(
-          //     itemCount: 1,
-          //     separatorBuilder: (context, index) {
-          //       return Divider();
-          //     },
-          //     itemBuilder: (context, index) {
-          //       return null;
-          //     },
-          //   ),
-          // ),
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              searchRegistDeleteAll,
-              style: textStyleHighlight15,
+          Expanded(
+            child: Scrollbar(
+              child: ListView.separated(
+                itemCount: bookService.bookSearchRegistList.length,
+                separatorBuilder: (context, index) {
+                  return Divider(height: 5);
+                },
+                itemBuilder: (context, index) {
+                  if (bookService.bookSearchRegistList.isEmpty) {
+                    return SizedBox();
+                  }
+                  return Theme(
+                    data: ThemeData(highlightColor: transparentColor),
+                    child: ListTile(
+                      splashColor: transparentColor,
+                      onTap: () {
+                        _searchController.text =
+                            bookService.bookSearchRegistList[index].searchText;
+                        searchFocusNode.requestFocus();
+                      },
+                      leading: Icon(Icons.history_rounded),
+                      title: Text(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        bookService.bookSearchRegistList[index].searchText,
+                        style: textStyleBlack15,
+                      ),
+                      trailing: IconButton(
+                        highlightColor: overlayColor,
+                        onPressed: () =>
+                            bookService.deleteBookSearchList(index: index),
+                        icon: Icon(
+                          Icons.close_rounded,
+                          size: iconBasicSize30,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  dynamic prePage(BookService bookService, List<Book> bookList) {
+    if (currentPage == 1) {
+      return null;
+    }
+    return () {
+      bookService.searchBooks(
+          lastSearchText, bookList, --currentPage, selectSearchSortOption.name);
+    };
+  }
+
+  dynamic nextPage(BookService bookService, List<Book> bookList) {
+    if (bookService.bookMetaData.isNotEmpty &&
+        bookService.bookMetaData.first.isEnd) {
+      return null;
+    }
+    return () {
+      bookService.searchBooks(
+          lastSearchText, bookList, ++currentPage, selectSearchSortOption.name);
+      isEnd = bookService.bookMetaData.isEmpty
+          ? false
+          : bookService.bookMetaData.first.isEnd;
+    };
+  }
+
+  void optionButtonTextUpdate(String text) {
+    super.setState(() {
+      optionButtonText = text;
+    });
   }
 }

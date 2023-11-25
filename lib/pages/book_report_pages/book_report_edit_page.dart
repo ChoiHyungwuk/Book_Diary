@@ -6,7 +6,7 @@ import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/service/book_service.dart';
-import 'package:flutter_project_book_search/widget/dialog/dialog.dart';
+import 'package:flutter_project_book_search/widget/dialog/two_button_dialog.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -20,12 +20,12 @@ class BookReportEditPage extends StatefulWidget {
     super.key,
     required this.index,
     this.book,
-    this.editOption,
+    this.isEdit,
   });
 
   final int index;
   final Book? book;
-  final bool? editOption; // true = 수정, false = 신규작성
+  final bool? isEdit; // true = 수정, false = 신규작성
 
   @override
   State<BookReportEditPage> createState() => _BookReportEditPageState();
@@ -85,7 +85,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
       canPop: false,
       onPopInvoked: (bool didPop) async {
         if (didPop == false &&
-            await showAlertDialog(context, bookReportBackPressed)) {
+            await showTwoButtonDialog(context, bookReportBackPressed)) {
           backPressed(bookService);
         }
       },
@@ -102,7 +102,8 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
               elevation: 1,
               leading: IconButton(
                 onPressed: () async {
-                  if (await showAlertDialog(context, bookReportBackPressed)) {
+                  if (await showTwoButtonDialog(
+                      context, bookReportBackPressed)) {
                     backPressed(bookService);
                   }
                 },
@@ -160,7 +161,6 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                     child: bookId == null
                         ? ElevatedButton(
                             onPressed: () async {
-                              bookService.bookSelectList.clear(); //검색목록 초기화
                               await selectBook(bookService, context);
                             },
                             style: ButtonStyle(
@@ -193,8 +193,7 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
                         : ListTile(
                             onTap: () async =>
                                 await selectBook(bookService, context),
-                            leading: Image.network('$bookThumbnail',
-                                fit: BoxFit.fitHeight),
+                            leading: imageReplace('$bookThumbnail'),
                             title: Text(
                               '$bookTitle',
                               style: textStyleBlack15,
@@ -374,21 +373,24 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
           bookTitle = bookService.bookSelectList.last.title;
           bookThumbnail = bookService.bookSelectList.last.thumbnail;
           authors = bookService.bookSelectList.last.authors;
+          bookService.bookSelectList.clear(); //검색목록 초기화
         },
       );
     }
   }
 
   backPressed(BookService bookService) {
-    Navigator.pop(context);
-    if (widget.editOption ?? true) {
-      bookService.deleteBookReport(index: widget.index);
+    if (widget.isEdit ?? false) {
+      Navigator.pop(context);
+      return;
     }
+    bookService.deleteBookReport(index: widget.index);
+    Navigator.pop(context);
   }
 
   initValues(BookReport list, TextEditingController title,
       TextEditingController content) {
-    if (widget.editOption ?? false) {
+    if (widget.isEdit ?? false) {
       startDate = [DateTime.parse(list.startDate!)];
       endDate = [DateTime.parse(list.endDate!)];
       bookId = list.id;

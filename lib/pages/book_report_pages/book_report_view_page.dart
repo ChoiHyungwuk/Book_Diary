@@ -6,7 +6,8 @@ import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/service/book_service.dart';
-import 'package:flutter_project_book_search/widget/dialog/dialog.dart';
+import 'package:flutter_project_book_search/utils/utils.dart';
+import 'package:flutter_project_book_search/widget/dialog/two_button_dialog.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +53,7 @@ class BookReportViewPage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => BookReportEditPage(
-                    editOption: true,
+                    isEdit: true,
                     index: bookService.bookReportList.indexOf(bookReport),
                   ),
                 ),
@@ -68,7 +69,7 @@ class BookReportViewPage extends StatelessWidget {
             tooltip: delete,
             onPressed: () async {
               BookService bookService = context.read<BookService>();
-              if (await showAlertDialog(context, bookReportDelete)) {
+              if (await showTwoButtonDialog(context, bookReportDelete)) {
                 bookService.deleteBookReport(
                     index: bookService.bookReportList.indexOf(bookReport));
                 if (!context.mounted) {
@@ -129,10 +130,7 @@ class BookReportViewPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Row(
                           children: <Widget>[
-                            Image.network(
-                              bookReport.thumbnail!,
-                              height: 150,
-                            ),
+                            imageReplace(bookReport.thumbnail ?? ''),
                             SizedBox(width: 10),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

@@ -4,6 +4,7 @@ import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
+import 'package:flutter_project_book_search/utils/utils.dart';
 
 class BookDetailPage extends StatelessWidget {
   const BookDetailPage({super.key, required this.book});
@@ -87,10 +88,10 @@ class BookDetailPageBody extends StatelessWidget {
           padding: bodyPadding,
           child: Column(
             children: <Widget>[
-              Image.network(
-                book.thumbnail,
-                fit: BoxFit.contain,
-              )
+              imageReplace(book.thumbnail),
+              Text(book.title),
+              Text(book.authors.join(", ")),
+              Text(book.contents),
             ],
           ),
         ),

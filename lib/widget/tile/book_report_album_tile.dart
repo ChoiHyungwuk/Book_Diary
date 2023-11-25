@@ -3,6 +3,7 @@ import 'package:flutter_project_book_search/pages/book_report_pages/book_report_
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
+import 'package:flutter_project_book_search/utils/utils.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../data/book_report.dart';
@@ -30,12 +31,10 @@ class BookReportAlbumTile extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Column(
-          children: [
-            Image.network(
-              bookReport.thumbnail!,
-              fit: BoxFit.fitHeight,
-              height: 130,
-            ),
+          children: <Widget>[
+            bookReport.thumbnail == null
+                ? SizedBox()
+                : imageReplace(bookReport.thumbnail ?? ''),
             SizedBox(height: 1),
             Text(
               maxLines: 1,

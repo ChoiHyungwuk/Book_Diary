@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
-import 'package:flutter_project_book_search/main.dart';
 import 'package:flutter_project_book_search/pages/book_report_pages/book_report_edit_page.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
@@ -20,12 +19,6 @@ class BookReportPage extends StatefulWidget {
 }
 
 class _BookReportPage extends State<BookReportPage> {
-  final List<bool> _selectedViewOption = <bool>[
-    (prefs.getBool('viewOption') ?? true),
-    !(prefs.getBool('viewOption') ?? true)
-  ];
-  bool viewOption = prefs.getBool('viewOption') ?? true;
-
   List<Widget> viewContent = <Widget>[
     Row(
       children: [
@@ -48,6 +41,12 @@ class _BookReportPage extends State<BookReportPage> {
   Widget build(BuildContext context) {
     return Consumer<BookService>(
       builder: (context, bookService, child) {
+        bool viewOption = bookService.getReportViewOption();
+        final List<bool> selectedViewOption = <bool>[
+          (viewOption),
+          !(viewOption)
+        ];
+
         return Scaffold(
           appBar: AppBar(
             toolbarHeight: appBarHeight,
@@ -63,10 +62,11 @@ class _BookReportPage extends State<BookReportPage> {
                   ToggleButtons(
                     onPressed: (int index) {
                       setState(() {
-                        for (int i = 0; i < _selectedViewOption.length; i++) {
-                          _selectedViewOption[i] = i == index;
+                        for (int i = 0; i < selectedViewOption.length; i++) {
+                          selectedViewOption[i] = i == index;
                         }
-                        prefs.setBool('viewOption', index == 0 ? true : false);
+                        bookService
+                            .setReportViewOption(index == 0 ? true : false);
                         viewOption = index == 0 ? true : false;
                       });
                     },
@@ -81,7 +81,7 @@ class _BookReportPage extends State<BookReportPage> {
                       minHeight: 35.0,
                       minWidth: 90.0,
                     ),
-                    isSelected: _selectedViewOption,
+                    isSelected: selectedViewOption,
                     children: viewContent,
                   ),
                   SizedBox(width: 5),

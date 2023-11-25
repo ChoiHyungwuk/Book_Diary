@@ -4,7 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book_meta.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
-import 'package:flutter_project_book_search/res/apiKey.dart';
+import 'package:flutter_project_book_search/data/book_search_regist.dart';
+import 'package:flutter_project_book_search/res/api_key.dart';
 
 import '../data/book.dart';
 import '../main.dart';
@@ -15,13 +16,17 @@ class BookService extends ChangeNotifier {
     loadlikedBookList();
     loadBookReportList();
     checkNullElement();
+    loadBookSearchList();
+    prefs.setString('lastSearchText', '');
   }
 
   List<Book> bookList = []; // 책 목록
-  List<BookMetaData> bookMetaData = []; // 카카오 book api 메타 데이터
   List<Book> likedBookList = []; //좋아요 한 책 목록
-  List<Book> bookSelectList = []; //책 선택 리스트
-  List<BookReport> bookReportList = []; //독후감 리스트
+  List<Book> bookSelectList = []; //책 선택 목록
+  List<BookSearchRegist> bookSearchRegistList = []; //최근 검색 목록
+
+  List<BookReport> bookReportList = []; //독후감 목록
+  List<BookMetaData> bookMetaData = []; // 카카오 book api 메타 데이터
 
   void toggleLikeBook({required Book book}) {
     String bookId = book.id;
@@ -34,13 +39,14 @@ class BookService extends ChangeNotifier {
     savelikedBookList();
   }
 
-  void searchBooks(String query, int maxResults, List<Book> list) async {
+  void searchBooks(
+      String query, List<Book> list, int page, String sortOption) async {
     list.clear(); // 검색 버튼 누를때 이전 데이터들을 지워주기
     bookMetaData.clear();
 
     if (query.isNotEmpty) {
       Response res = await Dio().get(
-        "https://dapi.kakao.com/v3/search/book?query=$query",
+        "https://dapi.kakao.com/v3/search/book?query=$query&size=30&page=$page&sort=$sortOption",
         options: Options(
           headers: {
             'Authorization': kakaoAPIKey,
@@ -58,19 +64,16 @@ class BookService extends ChangeNotifier {
       );
 
       for (Map<String, dynamic> item in items) {
-        if (item['thumbnail'] != "") {
-          //썸네일 이미지 없는 것은 리스트에서 제외
-          Book book = Book(
-            id: item['isbn'],
-            title: item['title'] ?? '',
-            authors: (item['authors'] ?? []) as List,
-            publishedDate: item['datetime']?.toString().substring(0, 10) ?? '',
-            contents: item['contents'] ?? '',
-            thumbnail: item['thumbnail'],
-            previewLink: item['url'] ?? '',
-          );
-          list.add(book);
-        }
+        Book book = Book(
+          id: item['isbn'],
+          title: item['title'] ?? '',
+          authors: (item['authors'] ?? []) as List,
+          publishedDate: item['datetime']?.toString().substring(0, 10) ?? '',
+          contents: item['contents'] ?? '',
+          thumbnail: item['thumbnail'] ?? '',
+          previewLink: item['url'] ?? '',
+        );
+        list.add(book);
       }
     }
     notifyListeners();
@@ -114,6 +117,28 @@ class BookService extends ChangeNotifier {
 
     bookReportList =
         bookJsonList.map((json) => BookReport.fromJson(json)).toList();
+  }
+
+  //책 최근 검색 리스트
+  saveBookSearchList() {
+    List bookJsonList = bookSearchRegistList
+        .map((searchRegist) => searchRegist.toJson())
+        .toList();
+
+    String jsonString = jsonEncode(bookJsonList);
+
+    prefs.setString('bookSearchRegistList', jsonString);
+  }
+
+  loadBookSearchList() {
+    String? jsonString = prefs.getString('bookSearchRegistList');
+
+    if (jsonString == null) return;
+
+    List bookJsonList = jsonDecode(jsonString);
+
+    bookSearchRegistList =
+        bookJsonList.map((json) => BookSearchRegist.fromJson(json)).toList();
   }
 
   createInitReport({required DateTime editDay}) {
@@ -160,6 +185,43 @@ class BookService extends ChangeNotifier {
     bookReportList.removeAt(index);
     notifyListeners();
     saveBookReportList();
+  }
+
+  addBookSearchList({required String text}) {
+    if (bookSearchRegistList
+        .map((searchRegist) => searchRegist.searchText)
+        .contains(text)) {
+      return;
+    } else {
+      bookSearchRegistList.add(BookSearchRegist(searchText: text));
+    }
+    notifyListeners();
+    saveBookSearchList();
+  }
+
+  deleteBookSearchList({required int index}) {
+    bookSearchRegistList.removeAt(index);
+    notifyListeners();
+    saveBookSearchList();
+  }
+
+  deleteAllBookSearchList() {
+    if (bookSearchRegistList.isEmpty) {
+      return;
+    }
+    for (int i = 0; i < bookSearchRegistList.length; i++) {
+      bookSearchRegistList.removeAt(i);
+    }
+    notifyListeners();
+    saveBookSearchList();
+  }
+
+  setReportViewOption(bool option) {
+    prefs.setBool('viewOption', option);
+  }
+
+  bool getReportViewOption() {
+    return prefs.getBool('viewOption') ?? true;
   }
 
   checkNullElement() {

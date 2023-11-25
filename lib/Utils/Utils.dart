@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
+import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
+import 'package:flutter_project_book_search/widget/dialog/one_button_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 void showToast(FToast fToast, String msg, int duration) {
   Widget toast = Container(
@@ -49,4 +52,24 @@ double setWidthSize(context, double val) {
 
 double setHeightSize(context, double val) {
   return MediaQuery.of(context).size.height * val;
+}
+
+Future<bool> checkNetworkState(context) async {
+  final connectivityResult = await (Connectivity().checkConnectivity());
+  if (connectivityResult == ConnectivityResult.none) {
+    showOneButtonDialog(context, checkNetwork);
+    return false;
+  }
+  return true;
+}
+
+Image imageReplace(String imageLink) {
+  if (imageLink.isEmpty) {
+    return Image(
+        image: AssetImage('lib/res/image/no_image.png'), fit: BoxFit.contain);
+  }
+  return Image.network(
+    imageLink,
+    fit: BoxFit.contain,
+  );
 }

@@ -5,6 +5,7 @@ import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/service/book_service.dart';
+import 'package:flutter_project_book_search/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class BookTile extends StatelessWidget {
@@ -32,38 +33,50 @@ class BookTile extends StatelessWidget {
           Expanded(
             child: AbsorbPointer(
               absorbing: pageOption,
-              child: ListTile(
-                splashColor: overlayColor,
-                onTap: () {
-                  pageOption
-                      ? null
-                      : Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                // WebViewPage(
-                                //   url: book.previewLink
-                                //       .replaceFirst("http", "https"),
-                                // ),
-                                BookDetailPage(book: book),
-                          ),
-                        );
-                },
-                leading: Image.network(
-                  book.thumbnail,
-                  fit: BoxFit.fitWidth,
-                ),
-                title: Text(
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  book.title,
-                  style: textStyleBlack15,
-                ),
-                subtitle: Text(
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  "저자 : ${book.authors.join(", ")}\n출간일 : ${book.publishedDate}",
-                  style: textStyleGrey13,
+              child: Theme(
+                data: ThemeData(highlightColor: overlayColor),
+                child: ListTile(
+                  splashColor: overlayColor,
+                  onTap: () {
+                    pageOption
+                        ? null
+                        : Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  // WebViewPage(
+                                  //   url: book.previewLink
+                                  //       .replaceFirst("http", "https"),
+                                  // ),
+                                  BookDetailPage(book: book),
+                            ),
+                          );
+                  },
+                  leading: imageReplace(book.thumbnail),
+                  title: Text(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    book.title,
+                    style: textStyleBlack15,
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      book.authors.join().isEmpty
+                          ? SizedBox()
+                          : Text(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              "저자 : ${book.authors.join(", ")}",
+                              style: textStyleGrey13,
+                            ),
+                      Text(
+                        maxLines: 1,
+                        "출간일 : ${book.publishedDate}",
+                        style: textStyleGrey13,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -38,3 +38,12 @@ TextStyle dialogOkStyle =
     TextStyle(fontSize: textBasicSize15, color: appBasicColor);
 TextStyle dialogNoStyle =
     TextStyle(fontSize: textBasicSize15, color: blackColor);
+
+//Button Border
+MaterialStateProperty<BorderSide> focusButtonBorder = MaterialStateProperty.all(
+  BorderSide(width: 3, color: appBasicColor),
+);
+MaterialStateProperty<BorderSide> outFocusButtonBorder =
+    MaterialStateProperty.all(
+  BorderSide(width: 1, color: greyColor),
+);
