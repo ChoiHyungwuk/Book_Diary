@@ -11,6 +11,10 @@ const String ok = "확인";
 const String modify = "수정";
 const String delete = "삭제";
 const String editDay = "작성일";
+const String bookIntroduction = "책 소개";
+const String bookIntroductionEmpty = "책 소개가 없습니다";
+const String publisher = "출판사";
+const String more = "더보기";
 
 const String checkNetwork = "현재 인터넷에 연결되어있지 않습니다\n인터넷에 연결 후 다시 시도 바랍니다";
 
@@ -19,10 +23,10 @@ const String searchHint = "검색어를 입력해주세요";
 const String searchClose = "닫기";
 const String searchEmpty = "검색 결과가 없습니다";
 
-const String searchTypeOptions = "검색 옵션";
-const String searchTypeOptionAll = "전체";
-const String searchTypeOptionAuthors = "저자";
-const String searchTypeOptionTitle = "제목";
+const String searchTargetOptions = "검색 옵션";
+const String searchTargetOptionAll = "전체";
+const String searchTargetOptionAuthors = "저자";
+const String searchTargetOptionTitle = "제목";
 
 const String searchSortOptions = "정렬 옵션";
 const String searchSortOptionAccuracy = "정확도순";

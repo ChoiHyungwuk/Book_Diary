@@ -26,13 +26,13 @@ class _SearchPageState extends State<SearchPage> {
   bool isSearch = false; //검색입력창 포커스 제어 플래그
   bool isSearchEmpty = false; //검색결과 없을 때
   String lastSearchText = '';
-  String optionButtonText = searchTypeOptionAll;
+  String optionButtonText = searchTargetOptionAll;
 
   int totalPage = 1;
   int currentPage = 1;
   bool isEnd = true;
 
-  int selectSearchTypeOption = 0;
+  var selectSearchTargetOption = SearchTarget.all;
   var selectSearchSortOption = SearchSort.accuracy;
 
   FocusNode searchFocusNode = FocusNode();
@@ -126,6 +126,7 @@ class _SearchPageState extends State<SearchPage> {
                                         value,
                                         bookLists,
                                         currentPage,
+                                        selectSearchTargetOption.name,
                                         selectSearchSortOption.name);
                                     if (!widget.pageOption) {
                                       prefs.setString(
@@ -309,7 +310,7 @@ class _SearchPageState extends State<SearchPage> {
                                   ),
                                 ),
                                 Text(
-                                  searchTypeOptions,
+                                  searchTargetOptions,
                                   style: textStyleBlack20,
                                 ),
                                 SizedBox(
@@ -326,7 +327,8 @@ class _SearchPageState extends State<SearchPage> {
                                             setWidthSize(context, 0.30),
                                           ),
                                         ),
-                                        side: selectSearchTypeOption == 0
+                                        side: selectSearchTargetOption ==
+                                                SearchTarget.all
                                             ? focusButtonBorder
                                             : outFocusButtonBorder,
                                         overlayColor:
@@ -334,14 +336,15 @@ class _SearchPageState extends State<SearchPage> {
                                                 overlayColor),
                                       ),
                                       child: Text(
-                                        searchTypeOptionAll,
+                                        searchTargetOptionAll,
                                         style: textStyleBlack15,
                                       ),
                                       onPressed: () {
                                         setState(() {
                                           optionButtonTextUpdate(
-                                              searchTypeOptionAll);
-                                          selectSearchTypeOption = 0;
+                                              searchTargetOptionAll);
+                                          selectSearchTargetOption =
+                                              SearchTarget.all;
                                         });
                                       },
                                     ),
@@ -355,7 +358,8 @@ class _SearchPageState extends State<SearchPage> {
                                             setWidthSize(context, 0.30),
                                           ),
                                         ),
-                                        side: selectSearchTypeOption == 1
+                                        side: selectSearchTargetOption ==
+                                                SearchTarget.person
                                             ? focusButtonBorder
                                             : outFocusButtonBorder,
                                         overlayColor:
@@ -363,14 +367,15 @@ class _SearchPageState extends State<SearchPage> {
                                                 overlayColor),
                                       ),
                                       child: Text(
-                                        searchTypeOptionAuthors,
+                                        searchTargetOptionAuthors,
                                         style: textStyleBlack15,
                                       ),
                                       onPressed: () {
                                         setState(() {
                                           optionButtonTextUpdate(
-                                              searchTypeOptionAuthors);
-                                          selectSearchTypeOption = 1;
+                                              searchTargetOptionAuthors);
+                                          selectSearchTargetOption =
+                                              SearchTarget.person;
                                         });
                                       },
                                     ),
@@ -384,7 +389,8 @@ class _SearchPageState extends State<SearchPage> {
                                             setWidthSize(context, 0.30),
                                           ),
                                         ),
-                                        side: selectSearchTypeOption == 2
+                                        side: selectSearchTargetOption ==
+                                                SearchTarget.title
                                             ? focusButtonBorder
                                             : outFocusButtonBorder,
                                         overlayColor:
@@ -392,14 +398,15 @@ class _SearchPageState extends State<SearchPage> {
                                                 overlayColor),
                                       ),
                                       child: Text(
-                                        searchTypeOptionTitle,
+                                        searchTargetOptionTitle,
                                         style: textStyleBlack15,
                                       ),
                                       onPressed: () {
                                         setState(() {
                                           optionButtonTextUpdate(
-                                              searchTypeOptionTitle);
-                                          selectSearchTypeOption = 2;
+                                              searchTargetOptionTitle);
+                                          selectSearchTargetOption =
+                                              SearchTarget.title;
                                         });
                                       },
                                     ),
@@ -598,8 +605,8 @@ class _SearchPageState extends State<SearchPage> {
       return null;
     }
     return () {
-      bookService.searchBooks(
-          lastSearchText, bookList, --currentPage, selectSearchSortOption.name);
+      bookService.searchBooks(lastSearchText, bookList, --currentPage,
+          selectSearchTargetOption.name, selectSearchSortOption.name);
     };
   }
 
@@ -609,8 +616,8 @@ class _SearchPageState extends State<SearchPage> {
       return null;
     }
     return () {
-      bookService.searchBooks(
-          lastSearchText, bookList, ++currentPage, selectSearchSortOption.name);
+      bookService.searchBooks(lastSearchText, bookList, ++currentPage,
+          selectSearchTargetOption.name, selectSearchSortOption.name);
       isEnd = bookService.bookMetaData.isEmpty
           ? false
           : bookService.bookMetaData.first.isEnd;

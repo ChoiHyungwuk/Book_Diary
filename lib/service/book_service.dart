@@ -39,14 +39,16 @@ class BookService extends ChangeNotifier {
     savelikedBookList();
   }
 
-  void searchBooks(
-      String query, List<Book> list, int page, String sortOption) async {
+  void searchBooks(String query, List<Book> list, int page, String targetOption,
+      String sortOption) async {
     list.clear(); // 검색 버튼 누를때 이전 데이터들을 지워주기
     bookMetaData.clear();
 
     if (query.isNotEmpty) {
       Response res = await Dio().get(
-        "https://dapi.kakao.com/v3/search/book?query=$query&size=30&page=$page&sort=$sortOption",
+        targetOption == 'all'
+            ? "https://dapi.kakao.com/v3/search/book?query=$query&size=30&page=$page&sort=$sortOption"
+            : "https://dapi.kakao.com/v3/search/book?query=$query&size=30&page=$page&target=$targetOption&sort=$sortOption",
         options: Options(
           headers: {
             'Authorization': kakaoAPIKey,
@@ -72,6 +74,7 @@ class BookService extends ChangeNotifier {
           contents: item['contents'] ?? '',
           thumbnail: item['thumbnail'] ?? '',
           previewLink: item['url'] ?? '',
+          publisher: item['publisher'] ?? '',
         );
         list.add(book);
       }
@@ -94,8 +97,11 @@ class BookService extends ChangeNotifier {
     if (jsonString == null) return;
 
     List bookJsonList = jsonDecode(jsonString);
-
-    likedBookList = bookJsonList.map((json) => Book.fromJson(json)).toList();
+    try {
+      likedBookList = bookJsonList.map((json) => Book.fromJson(json)).toList();
+    } catch (e) {
+      prefs.remove('likedBookList');
+    }
   }
 
   //독후감 페이지 리스트

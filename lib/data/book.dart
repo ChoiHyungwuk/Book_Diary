@@ -3,10 +3,11 @@ class Book {
   String id; //책 고유 id 값
   String title; // 책 제목
   String thumbnail; // 썸네일 이미지 링크
-  String previewLink; // ListTile 을 눌렀을 때 이동하는 링크
+  String previewLink; // 책 상세 페이지 웹링크
   String contents; //책 내용 (정보)
   List authors; //글쓴이
   String publishedDate; //출간일
+  String publisher; //출간일
 
   Book({
     required this.id,
@@ -16,6 +17,7 @@ class Book {
     required this.contents,
     required this.authors,
     required this.publishedDate,
+    required this.publisher,
   });
 
   Map toJson() {
@@ -27,6 +29,7 @@ class Book {
       'contents': contents,
       'authors': authors,
       'publishedDate': publishedDate,
+      'publisher': publisher,
     };
   }
 
@@ -39,6 +42,7 @@ class Book {
       contents: json['contents'],
       authors: json['authors'],
       publishedDate: json['publishedDate'],
+      publisher: json['publisher'],
     );
   }
 }

@@ -137,7 +137,7 @@ class BookReportViewPage extends StatelessWidget {
                               children: <Widget>[
                                 Text(
                                   bookReport.bookTitle ?? '',
-                                  style: TextStyle(fontSize: textSize20),
+                                  style: textStyleBlack20,
                                 ),
                                 SizedBox(height: 10),
                                 Row(
@@ -150,7 +150,7 @@ class BookReportViewPage extends StatelessWidget {
                                     SizedBox(width: 10),
                                     Text(
                                       '${bookReport.authors?.join(', ')}',
-                                      style: textStyleGrey15,
+                                      style: textStyleBlack15,
                                     ),
                                   ],
                                 ),
@@ -165,7 +165,7 @@ class BookReportViewPage extends StatelessWidget {
                                     SizedBox(width: 10),
                                     Text(
                                       '${bookReport.startDate?.substring(0, 10)} ~ ${bookReport.endDate?.substring(0, 10)}',
-                                      style: textStyleGrey15,
+                                      style: textStyleBlack15,
                                     ),
                                   ],
                                 ),
