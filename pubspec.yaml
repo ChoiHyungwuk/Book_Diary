@@ -39,7 +39,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
   shared_preferences: ^2.2.2
-  webview_flutter: ^3.0.4
+  webview_flutter: ^3.0.0
   dio: ^5.3.3
   flutter_rating_bar: ^4.0.1
   calendar_date_picker2: ^0.5.3
