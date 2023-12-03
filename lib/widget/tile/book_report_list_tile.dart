@@ -4,6 +4,7 @@ import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/utils/utils.dart';
+import 'package:flutter_project_book_search/widget/modal_bottom_sheet/long_touch_bottom_sheet.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../data/book_report.dart';
@@ -29,6 +30,9 @@ class BookReportListTile extends StatelessWidget {
               builder: (context) => BookReportViewPage(bookReport: bookReport),
             ),
           );
+        },
+        onLongPress: () {
+          showLongTouthBottomSheet(context, bookReport);
         },
         leading: bookReport.thumbnail == null
             ? SizedBox()

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/data/book_report.dart';
+import 'package:flutter_project_book_search/pages/book_report_pages/book_report_edit_page.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
+import 'package:flutter_project_book_search/service/book_service.dart';
 import 'package:flutter_project_book_search/widget/dialog/one_button_dialog.dart';
+import 'package:flutter_project_book_search/widget/dialog/two_button_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:provider/provider.dart';
 
 void showToast(FToast fToast, String msg, int duration) {
   Widget toast = Container(
@@ -71,5 +76,31 @@ Image imageReplace(String imageLink) {
   return Image.network(
     imageLink,
     fit: BoxFit.contain,
+  );
+}
+
+deleteBookReportElement(BuildContext context, BookReport bookReport) async {
+  BookService bookService = context.read<BookService>();
+  if (await showTwoButtonDialog(context, bookReportDelete)) {
+    bookService.deleteBookReport(
+        index: bookService.bookReportList.indexOf(bookReport));
+    if (!context.mounted) {
+      return; //비동기 내부에서 context를 파라미터로 전달하려할 때 사용
+    }
+    Navigator.pop(context);
+  }
+}
+
+modifyBookReportElement(BuildContext context, BookReport bookReport) {
+  BookService bookService = context.read<BookService>();
+  Navigator.pop(context);
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => BookReportEditPage(
+        isEdit: true,
+        index: bookService.bookReportList.indexOf(bookReport),
+      ),
+    ),
   );
 }

@@ -4,6 +4,7 @@ import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/utils/utils.dart';
+import 'package:flutter_project_book_search/widget/modal_bottom_sheet/long_touch_bottom_sheet.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../data/book_report.dart';
@@ -12,9 +13,13 @@ class BookReportAlbumTile extends StatelessWidget {
   const BookReportAlbumTile({
     super.key,
     required this.bookReport,
+    required this.gridKey,
+    required this.conte,
   });
 
   final BookReport bookReport;
+  final GlobalKey gridKey;
+  final BuildContext conte;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +32,9 @@ class BookReportAlbumTile extends StatelessWidget {
             builder: (context) => BookReportViewPage(bookReport: bookReport),
           ),
         );
+      },
+      onLongPress: () {
+        showLongTouthBottomSheet(context, bookReport);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

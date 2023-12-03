@@ -19,6 +19,8 @@ class BookReportPage extends StatefulWidget {
 }
 
 class _BookReportPage extends State<BookReportPage> {
+  final GlobalKey gridKey = GlobalKey();
+
   List<Widget> viewContent = <Widget>[
     Row(
       children: [
@@ -53,7 +55,7 @@ class _BookReportPage extends State<BookReportPage> {
             automaticallyImplyLeading: false,
             elevation: 1,
             title: Text(
-              "전체 (${bookService.bookReportList.length})",
+              "$searchTargetOptionAll (${bookService.bookReportList.length})",
               style: appBarTitleStyle,
             ),
             actions: <Widget>[
@@ -118,10 +120,11 @@ class _BookReportPage extends State<BookReportPage> {
                         child: GlowingOverscrollIndicator(
                         color: overlayColor,
                         axisDirection: AxisDirection.down,
+                        key: gridKey,
                         child: GridView.builder(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3, childAspectRatio: 3 / 4.5),
+                                  crossAxisCount: 3, childAspectRatio: 3 / 5),
                           itemCount: bookService.bookReportList.length,
                           itemBuilder: (context, index) {
                             if (bookService.bookReportList.isEmpty) {
@@ -129,7 +132,11 @@ class _BookReportPage extends State<BookReportPage> {
                             }
                             BookReport bookReport =
                                 bookService.bookReportList.elementAt(index);
-                            return BookReportAlbumTile(bookReport: bookReport);
+                            return BookReportAlbumTile(
+                              bookReport: bookReport,
+                              gridKey: gridKey,
+                              conte: context,
+                            );
                           },
                         ),
                       ))

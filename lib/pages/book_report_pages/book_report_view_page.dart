@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
-import 'package:flutter_project_book_search/pages/book_report_pages/book_report_edit_page.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
-import 'package:flutter_project_book_search/service/book_service.dart';
 import 'package:flutter_project_book_search/utils/utils.dart';
-import 'package:flutter_project_book_search/widget/dialog/two_button_dialog.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:provider/provider.dart';
 
 class BookReportViewPage extends StatelessWidget {
   const BookReportViewPage({
@@ -47,17 +43,7 @@ class BookReportViewPage extends StatelessWidget {
           IconButton(
             tooltip: modify,
             onPressed: () {
-              BookService bookService = context.read<BookService>();
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BookReportEditPage(
-                    isEdit: true,
-                    index: bookService.bookReportList.indexOf(bookReport),
-                  ),
-                ),
-              );
+              modifyBookReportElement(context, bookReport);
             },
             icon: Icon(
               Icons.edit_square,
@@ -68,15 +54,7 @@ class BookReportViewPage extends StatelessWidget {
           IconButton(
             tooltip: delete,
             onPressed: () async {
-              BookService bookService = context.read<BookService>();
-              if (await showTwoButtonDialog(context, bookReportDelete)) {
-                bookService.deleteBookReport(
-                    index: bookService.bookReportList.indexOf(bookReport));
-                if (!context.mounted) {
-                  return; //비동기 내부에서 context를 파라미터로 전달하려할 때 사용
-                }
-                Navigator.pop(context);
-              }
+              deleteBookReportElement(context, bookReport);
             },
             icon: Icon(
               Icons.delete,
