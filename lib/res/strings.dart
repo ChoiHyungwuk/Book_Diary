@@ -18,6 +18,12 @@ const String more = "더보기";
 
 const String checkNetwork = "현재 인터넷에 연결되어있지 않습니다\n인터넷에 연결 후 다시 시도 바랍니다";
 
+//book info empty
+const String authorsEmpty = "저자 미상";
+const String publishedDateEmpty = "알 수 없음";
+const String publisherEmpty = "출판사 없음";
+//book info empty
+
 //book Search Page Use
 const String searchHint = "검색어를 입력해주세요";
 const String searchClose = "닫기";

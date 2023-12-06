@@ -6,6 +6,7 @@ import 'package:flutter_project_book_search/data/book_meta.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
 import 'package:flutter_project_book_search/data/book_search_regist.dart';
 import 'package:flutter_project_book_search/res/api_key.dart';
+import 'package:flutter_project_book_search/res/strings.dart';
 
 import '../data/book.dart';
 import '../main.dart';
@@ -66,15 +67,18 @@ class BookService extends ChangeNotifier {
       );
 
       for (Map<String, dynamic> item in items) {
+        List<dynamic> authors = item['authors'];
         Book book = Book(
           id: item['isbn'],
-          title: item['title'] ?? '',
-          authors: (item['authors'] ?? []) as List,
-          publishedDate: item['datetime']?.toString().substring(0, 10) ?? '',
-          contents: item['contents'] ?? '',
+          title: item['title'],
+          authors: authors.isEmpty ? [authorsEmpty] : authors,
+          publishedDate: (item['datetime'].toString().length > 11)
+              ? item['datetime'].toString().substring(0, 10)
+              : publishedDateEmpty,
+          contents: item['contents'] ?? publishedDateEmpty,
           thumbnail: item['thumbnail'] ?? '',
-          previewLink: item['url'] ?? '',
-          publisher: item['publisher'] ?? '',
+          previewLink: item['url'],
+          publisher: item['publisher'] ?? publisherEmpty,
         );
         list.add(book);
       }

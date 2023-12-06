@@ -90,70 +90,69 @@ class BookDetailPageBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  imageReplace(book.thumbnail),
-                  SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        book.title,
-                        style: textStyleBlack20,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.person,
-                            size: iconBasicSize30,
-                            color: greyColor,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            book.authors.join(", "),
-                            style: textStyleBlack15,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.store_rounded,
-                            size: iconBasicSize30,
-                            color: greyColor,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            book.publisher,
-                            style: textStyleBlack15,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.calendar_month_rounded,
-                            size: iconBasicSize30,
-                            color: greyColor,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            book.publishedDate.substring(0, 10),
-                            style: textStyleBlack15,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    imageReplace(book.thumbnail),
+                    SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          book.title,
+                          style: textStyleBlack20,
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.person,
+                              size: iconBasicSize30,
+                              color: greyColor,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              book.authors.join(", "),
+                              style: textStyleBlack15,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.store_rounded,
+                              size: iconBasicSize30,
+                              color: greyColor,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              book.publisher,
+                              style: textStyleBlack15,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.calendar_month_rounded,
+                              size: iconBasicSize30,
+                              color: greyColor,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              book.publishedDate.substring(0, 10),
+                              style: textStyleBlack15,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 10),
               Container(
