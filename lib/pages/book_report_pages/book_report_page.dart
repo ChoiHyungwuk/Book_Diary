@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
-import 'package:flutter_project_book_search/pages/book_report_pages/book_report_edit_page.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/service/book_service.dart';
+import 'package:flutter_project_book_search/utils/utils.dart';
 import 'package:flutter_project_book_search/widget/tile/book_report_album_tile.dart';
 import 'package:flutter_project_book_search/widget/tile/book_report_list_tile.dart';
 import 'package:provider/provider.dart';
@@ -145,15 +145,7 @@ class _BookReportPage extends State<BookReportPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              bookService.createInitReport(editDay: DateTime.now());
-              Navigator.push<void>(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => BookReportEditPage(
-                    index: bookService.bookReportList.length - 1,
-                  ),
-                ),
-              );
+              addBookReportElement(context, null);
             },
             backgroundColor: appBasicColor,
             splashColor: overlayColor,

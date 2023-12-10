@@ -6,6 +6,7 @@ import 'package:flutter_project_book_search/res/strings.dart';
 import 'package:flutter_project_book_search/res/style.dart';
 import 'package:flutter_project_book_search/res/values.dart';
 import 'package:flutter_project_book_search/utils/utils.dart';
+import 'package:flutter_project_book_search/widget/modal_bottom_sheet/report_add_bottom_sheet.dart';
 
 class BookDetailPage extends StatelessWidget {
   const BookDetailPage({super.key, required this.book});
@@ -39,27 +40,7 @@ class BookDetailPage extends StatelessWidget {
           actions: <Widget>[
             IconButton(
               onPressed: () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return SizedBox(
-                      height: 200,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            const Text('Modal BottomSheet'),
-                            ElevatedButton(
-                              child: const Text('Close BottomSheet'),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
+                showAddBottomSheet(context, book);
               },
               icon: Icon(
                 Icons.menu_rounded,

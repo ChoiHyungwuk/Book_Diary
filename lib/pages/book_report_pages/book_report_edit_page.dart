@@ -402,6 +402,11 @@ class _BookReportEditPageState extends State<BookReportEditPage> {
       content.text = list.content ?? '';
       reportTitle = list.title ?? '';
       reportContent = list.content ?? '';
+    } else if (widget.book != null) {
+      bookId = widget.book!.id;
+      bookTitle = widget.book!.title;
+      bookThumbnail = widget.book!.thumbnail;
+      authors = widget.book!.authors;
     }
   }
 }

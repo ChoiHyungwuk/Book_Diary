@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_book_search/data/book.dart';
 import 'package:flutter_project_book_search/data/book_report.dart';
 import 'package:flutter_project_book_search/pages/book_report_pages/book_report_edit_page.dart';
 import 'package:flutter_project_book_search/res/colors.dart';
@@ -76,6 +77,20 @@ Image imageReplace(String imageLink) {
   return Image.network(
     imageLink,
     fit: BoxFit.contain,
+  );
+}
+
+addBookReportElement(BuildContext context, Book? book) {
+  BookService bookService = context.read<BookService>();
+  bookService.createInitReport(editDay: DateTime.now());
+  Navigator.push<void>(
+    context,
+    MaterialPageRoute(
+      builder: (BuildContext context) => BookReportEditPage(
+        index: bookService.bookReportList.length - 1,
+        book: book,
+      ),
+    ),
   );
 }
 

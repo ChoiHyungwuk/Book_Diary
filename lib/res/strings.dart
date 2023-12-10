@@ -44,7 +44,7 @@ const String searchRegistDeleteAllMsg = "최근 검색 기록을\n전부 삭제�
 //book Search Page Use
 
 //book Report Page Use
-const String addReport = "새 독후감";
+const String addReport = "새 독후감 작성하기";
 
 const String insertReportTitle = "제목을 입력해주세요";
 const String insertReportContent = "내용을 입력해주세요";
