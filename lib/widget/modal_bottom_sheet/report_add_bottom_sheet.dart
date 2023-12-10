@@ -18,6 +18,8 @@ showAddBottomSheet(BuildContext context, Book book) {
               ElevatedButton(
                 child: const Text(addReport),
                 onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
                   addBookReportElement(context, book);
                 },
               ),

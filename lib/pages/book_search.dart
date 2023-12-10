@@ -89,76 +89,56 @@ class _SearchPageState extends State<SearchPage> {
                     Flexible(
                       child: SizedBox(
                         height: 57,
-                        child: Stack(
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: IconButton(
-                                onPressed: () {
-                                  _searchController.clear();
-                                },
-                                splashColor: overlayColor,
-                                icon: Icon(Icons.cancel_rounded),
-                              ),
+                        child: TextField(
+                          onTap: () {
+                            setState(() {
+                              isSearch = true;
+                            });
+                          },
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (value) async {
+                            if (!await checkNetworkState(context)) {
+                              return;
+                            }
+                            lastSearchText = value;
+                            isSearch = false;
+                            currentPage = 1;
+                            bookService.searchBooks(
+                                value,
+                                bookLists,
+                                currentPage,
+                                selectSearchTargetOption.name,
+                                selectSearchSortOption.name);
+                            if (!widget.pageOption) {
+                              prefs.setString('lastSearchText', lastSearchText);
+                              bookService.addBookSearchList(
+                                  text: lastSearchText);
+                            }
+                          },
+                          controller: _searchController,
+                          focusNode: searchFocusNode,
+                          cursorColor: Colors.grey,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.search, color: Colors.grey),
+                            hintText: searchHint,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
                             ),
-                            InkWell(
-                              highlightColor: transparentColor,
-                              overlayColor:
-                                  MaterialStateProperty.all(transparentColor),
-                              onTap: () {
-                                searchFocusNode.requestFocus();
-                                setState(() {
-                                  isSearch = true;
-                                });
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                            ),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                _searchController.clear();
                               },
-                              child: AbsorbPointer(
-                                absorbing: true,
-                                child: TextField(
-                                  textInputAction: TextInputAction.done,
-                                  onSubmitted: (value) async {
-                                    if (!await checkNetworkState(context)) {
-                                      return;
-                                    }
-                                    lastSearchText = value;
-                                    isSearch = false;
-                                    currentPage = 1;
-                                    bookService.searchBooks(
-                                        value,
-                                        bookLists,
-                                        currentPage,
-                                        selectSearchTargetOption.name,
-                                        selectSearchSortOption.name);
-                                    if (!widget.pageOption) {
-                                      prefs.setString(
-                                          'lastSearchText', lastSearchText);
-                                      bookService.addBookSearchList(
-                                          text: lastSearchText);
-                                    }
-                                  },
-                                  controller: _searchController,
-                                  focusNode: searchFocusNode,
-                                  cursorColor: Colors.grey,
-                                  decoration: InputDecoration(
-                                    prefixIcon:
-                                        Icon(Icons.search, color: Colors.grey),
-                                    hintText: searchHint,
-                                    border: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.white),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.grey),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              splashColor: overlayColor,
+                              icon: Icon(Icons.cancel_rounded),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -628,5 +608,9 @@ class _SearchPageState extends State<SearchPage> {
     super.setState(() {
       optionButtonText = text;
     });
+  }
+
+  showClearButton() {
+    setState(() {});
   }
 }
