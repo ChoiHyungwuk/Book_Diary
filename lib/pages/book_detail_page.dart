@@ -125,7 +125,7 @@ class BookDetailPageBody extends StatelessWidget {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              book.publishedDate.substring(0, 10),
+                              book.publishedDate,
                               style: textStyleBlack15,
                             ),
                           ],
