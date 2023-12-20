@@ -1,4 +1,8 @@
-const String bookReport = "독후감";
+const String appName = "북다";
+const String appSubName = "북 다이어리";
+const String appIntro = "기록하는 나의 독서 습관";
+
+const String bookReportStr = "독후감";
 const String liked = "좋아요";
 const String bookToReadLater = "나중에 읽을 책";
 const String searchBooks = "책 검색";

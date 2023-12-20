@@ -8,6 +8,13 @@ TextStyle appBarTitleStyle = TextStyle(
     color: textTitleColor,
     fontWeight: FontWeight.bold);
 
+//AppIntro
+TextStyle appIntroTitleStyle = TextStyle(
+    fontSize: textSize20, color: appBasicColor, fontWeight: FontWeight.bold);
+
+TextStyle appIntroSubTextStyle =
+    TextStyle(fontSize: textSize20, color: overlayColor);
+
 //Text
 TextStyle textLabelStyle =
     TextStyle(fontSize: textLabelSize12, color: blackColor);

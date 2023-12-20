@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_project_book_search/pages/intro_pages/intro_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'pages/home_page.dart';
 import 'service/book_service.dart';
 
 late SharedPreferences prefs;
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         Locale('ko', ''),
         // Locale('en', ''),
       ],
-      home: HomePage(),
+      home: SplashScreen(),
     );
   }
 }

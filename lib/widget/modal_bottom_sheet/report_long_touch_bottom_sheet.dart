@@ -16,13 +16,13 @@ showLongTouthBottomSheet(BuildContext context, BookReport bookReport) {
             children: <Widget>[
               Text(bookReport.bookTitle ?? ''),
               ElevatedButton(
-                child: const Text(modify),
+                child: const Text('$bookReportStr $modify'),
                 onPressed: () async {
                   await modifyBookReportElement(context, bookReport);
                 },
               ),
               ElevatedButton(
-                child: const Text(delete),
+                child: const Text('$bookReportStr $delete'),
                 onPressed: () async {
                   await deleteBookReportElement(context, bookReport);
                 },

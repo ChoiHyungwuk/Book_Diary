@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
               items: [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.edit_document),
-                  label: bookReport,
+                  label: bookReportStr,
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.search),
