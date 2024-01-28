@@ -35,7 +35,6 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: [
         Locale('ko', ''),
-        // Locale('en', ''),
       ],
       home: SplashScreen(),
     );

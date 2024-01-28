@@ -320,12 +320,14 @@ class _SearchPageState extends State<SearchPage> {
                                         style: textStyleBlack15,
                                       ),
                                       onPressed: () {
-                                        setState(() {
-                                          optionButtonTextUpdate(
-                                              searchTargetOptionAll);
-                                          selectSearchTargetOption =
-                                              SearchTarget.all;
-                                        });
+                                        setState(
+                                          () {
+                                            optionButtonTextUpdate(
+                                                searchTargetOptionAll);
+                                            selectSearchTargetOption =
+                                                SearchTarget.all;
+                                          },
+                                        );
                                       },
                                     ),
                                     SizedBox(
